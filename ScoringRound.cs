@@ -145,22 +145,22 @@ namespace shakee.Humankind.FameByScoring
                     {
                         if ((int)tmpArr[0,0] == empireIndex)
                         {
-                            fameRatio = 120;
+                            fameRatio = 26;
                             
                         }
                         else if ((int)tmpArr[1,0] == empireIndex)
                         {
-                            fameRatio = 110;
+                            fameRatio = 24;
                             
                         }
                         else if ((int)tmpArr[2,0] == empireIndex)
                         {
-                            fameRatio = 100;
+                            fameRatio = 22;
                             
                         }
                         else
                         {
-                            fameRatio = 95;
+                            fameRatio = 20;
                             
                         }
                     }
@@ -198,22 +198,22 @@ namespace shakee.Humankind.FameByScoring
                         {
                             if ((int)tmpArr[0,0] == i)
                             {
-                                fameRatio = 120;
+                                fameRatio = 26;
                                 
                             }
                             else if ((int)tmpArr[1,0] == i)
                             {
-                                fameRatio = 110;
+                                fameRatio = 24;
                                 
                             }
                             else if ((int)tmpArr[2,0] == i)
                             {
-                                fameRatio = 100;
+                                fameRatio = 22;
                                 
                             }
                             else
                             {
-                                fameRatio = 95;
+                                fameRatio = 20;
                                 
                             }
                         }

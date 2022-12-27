@@ -67,7 +67,7 @@ namespace shakee.Humankind.FameByScoring
                 },
                 new GameOptionStateInfo{
                     Title = "Fame by Ranking",
-                    Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame.",
+                    Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame. The fame gain is more evenly distributed.",
                     Value = "true"
                 },
 			}
@@ -79,7 +79,7 @@ namespace shakee.Humankind.FameByScoring
 			Key = "GameOption_shakee_NumberFameScoring",
 			DefaultValue = "8",
 			Title = "Scoring Round",
-			Description = "You can choose after how many turns a fame scoring round is triggered. Does not affect a fame scoring when an empire changes era.",
+			Description = "Sets after how many turns a fame scoring round is triggered. Does not affect a fame scoring when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
@@ -111,9 +111,47 @@ namespace shakee.Humankind.FameByScoring
             
 			ControlType = 0,
 			Key = "GameOption_shakee_FameTurnMultiplier",
+			DefaultValue = "1",
+			Title = "Fame Gain multiplier for Scoring Rounds",
+			Description = "Setting for adjusting the fame gain per Scoring Round. Default is 1x.",
+			GroupKey = "GameOptionGroup_LobbyPaceOptions",
+			States = 
+			{
+                new GameOptionStateInfo{
+                    Title = "0.5x",
+                    Description = "Fame is multiplied by.",
+                    Value = "0.5"
+                },
+                new GameOptionStateInfo{
+                    Title = "0.75x",
+                    Description = "Fame is multiplied by.",
+                    Value = "0.75"
+                },
+                new GameOptionStateInfo{
+                    Title = "1x",
+                    Description = "Fame is multiplied by.",
+                    Value = "1"
+                },
+                new GameOptionStateInfo{
+                    Title = "1.5x",
+                    Description = "Fame is multiplied by.",
+                    Value = "1.5"
+                },
+                new GameOptionStateInfo{
+                    Title = "2x",
+                    Description = "Fame is multiplied by.",
+                    Value = "2"
+                },
+            }
+        };
+        public static GameOptionInfo FameGainMultiplier = new GameOptionInfo
+		{
+            
+			ControlType = 0,
+			Key = "GameOption_shakee_FameGainMultiplier",
 			DefaultValue = "false",
 			Title = "Gamespeed Multiplier for Fame Scoring",
-			Description = "If enabled, the Scoring Turns will be modified by the gamespeed multiplier.",
+			Description = "If enabled, the Scoring Turns will be modified by the gamespeed multiplier. Default is off.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
@@ -153,7 +191,7 @@ namespace shakee.Humankind.FameByScoring
                     gameSpeed = 1f;
                 }
                 
-                float turnTmp = gameOptionTurns * gameSpeed;  // DEBUG TESTING --> 8 or 12 as default
+                float turnTmp = gameOptionTurns * gameSpeed;
                 int turnCheck = (int)turnTmp;             
 
                 while ((int)turn > turnCheck) 
@@ -216,6 +254,7 @@ namespace shakee.Humankind.FameByScoring
 				FameByScoring.FameScoringOption,
                 FameByScoring.NumberScoringRounds,
                 FameByScoring.FameTurnMultiplier,
+                FameByScoring.FameGainMultiplier,
 			});
 			return true;
 		}
