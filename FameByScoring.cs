@@ -18,6 +18,7 @@ using HumankindModTool;
 using Amplitude.Framework.Options;
 using Amplitude.Mercury.Data.GameOptions;
 using Amplitude.Mercury.UI.Helpers;
+using Amplitude.Mercury.UI;
 
 namespace shakee.Humankind.FameByScoring
 {
@@ -39,17 +40,26 @@ namespace shakee.Humankind.FameByScoring
         public const string GameOptionGroup_LobbyPaceOptions = "GameOptionGroup_LobbyPaceOptions";
 
 
+        
+
+
+
 		public static GameOptionInfo FameScoringOption = new GameOptionInfo
 		{
             
 			ControlType = 0,
 			Key = "GameOption_shakee_FameScoring",
 			DefaultValue = "true",
-			Title = "Fame Distribution",
-			Description = "Sets how fame is generated and distributed.",
+			Title = "Fame by Scoring Rounds Distribution",
+			Description = "Sets how fame is generated and distributed. If activated, you gain fame every few turns and when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
+                new GameOptionStateInfo{
+                    Title = "Deactivate",
+                    Description = "Fame by Scoring Rounds is deactivated.",
+                    Value = "off"
+                },
                 new GameOptionStateInfo{
                     Title = "Fame by Ratio",
                     Description = "Fame is distributed by your ratio in comparison to all other Empires in the scoring categories. The fame gains can vary wildy between empires.",
@@ -57,27 +67,70 @@ namespace shakee.Humankind.FameByScoring
                 },
                 new GameOptionStateInfo{
                     Title = "Fame by Ranking",
-                    Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame. 1st = 120; 2nd = 110; 3rd = 100; all other 90.",
+                    Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame.",
                     Value = "true"
                 },
 			}
 		};
+        public static GameOptionInfo NumberScoringRounds = new GameOptionInfo
+		{
+            
+			ControlType = 0,
+			Key = "GameOption_shakee_NumberFameScoring",
+			DefaultValue = "8",
+			Title = "Scoring Round",
+			Description = "You can choose after how many turns a fame scoring round is triggered. Does not affect a fame scoring when an empire changes era.",
+			GroupKey = "GameOptionGroup_LobbyPaceOptions",
+			States = 
+			{
+                new GameOptionStateInfo{
+                    Title = "Every 4 Turns",
+                    Description = "-",
+                    Value = "4"
+                },
+                new GameOptionStateInfo{
+                    Title = "Every 8 Turns",
+                    Description = "-",
+                    Value = "8"
+                },
+                new GameOptionStateInfo{
+                    Title = "Every 12 Turns",
+                    Description = "-",
+                    Value = "12"
+                },
+                new GameOptionStateInfo{
+                    Title = "Every 16 Turns",
+                    Description = "-",
+                    Value = "16"
+                },
+            }
+        };
 
-        public static GameOptionStateInfo FameScoring_Ratio = new GameOptionStateInfo
+        public static GameOptionInfo FameTurnMultiplier = new GameOptionInfo
 		{
-			Value = "false",
-			Title = "Fame by Ratio",
-			Description = "Fame is distributed by your ratio in comparison to all other Empires in the scoring categories. The fame gains can vary wildy between empires"
-		};
-        public static GameOptionStateInfo FameScoring_Rank = new GameOptionStateInfo
-		{
-			Value = "true",
-			Title = "Fame by Ranks",
-			Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame. 1st = 120; 2nd = 110; 3rd = 100; all other 90"
-		};
+            
+			ControlType = 0,
+			Key = "GameOption_shakee_FameTurnMultiplier",
+			DefaultValue = "false",
+			Title = "Gamespeed Multiplier for Fame Scoring",
+			Description = "If enabled, the Scoring Turns will be modified by the gamespeed multiplier.",
+			GroupKey = "GameOptionGroup_LobbyPaceOptions",
+			States = 
+			{
+                new GameOptionStateInfo{
+                    Title = "On",
+                    Description = "Scoring turn will be modified by the gamespeed multiplier.",
+                    Value = "true"
+                },
+                new GameOptionStateInfo{
+                    Title = "Off",
+                    Description = "Scoring turn won't be modified.",
+                    Value = "false"
+                },
+            }
+        };
+
     }
-
-
     [HarmonyPatch(typeof(SimulationEvent_NewTurnBegin))]
 
     public class NewTurn_Patch 
@@ -86,39 +139,48 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPostfix]   
 
         public static void Raise (SimulationEvent_NewTurnBegin __instance, object sender, ushort turn) {
-            Console.WriteLine("Current Turn: {0}", turn.ToString());
-
-            float gamespeed = Amplitude.Mercury.Interop.AI.Snapshots.Game.GameSpeedMultiplier;
-            float turnTmp = 2 * gamespeed;  // DEBUG TESTING --> 8 or 12 as default
-            int turnCheck = (int)turnTmp;
-            int turnMulti = 1;
-            
-
-            while ((int)turn > turnCheck * turnMulti) 
+            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "off"))
             {
+                Console.WriteLine("Current Turn: {0}", turn.ToString());
+                float gameSpeed;
+                int gameOptionTurns = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
+                if (GameOptionHelper.CheckGameOption(FameByScoring.FameTurnMultiplier,"true"))
+                {
+                    gameSpeed = Amplitude.Mercury.Interop.AI.Snapshots.Game.GameSpeedMultiplier;
+                }
+                else
+                {
+                    gameSpeed = 1f;
+                }
                 
-                turnMulti += 1;
-                
-            } 
+                float turnTmp = gameOptionTurns * gameSpeed;  // DEBUG TESTING --> 8 or 12 as default
+                int turnCheck = (int)turnTmp;             
 
-            if ((int)turn == turnCheck * turnMulti)
-            {
-                Console.WriteLine("Round Scoring Needed | Multi {0}", turnMulti.ToString());
-                ScoringRound.RoundScoring(turn);
+                while ((int)turn > turnCheck) 
+                {
+                    
+                    turnCheck += (int)turnTmp;
+                    
+                } 
+
+                if ((int)turn == turnCheck)
+                {
+                    Console.WriteLine("Round Scoring Needed");
+                    ScoringRound.RoundScoring(turn);
+                    turnCheck += (int)turnTmp;
+                }
                 
+                else if ((int)turn < turnCheck)
+                {
+                    
+                    Console.WriteLine("No Scoring");
+
+                }
+
+                int finalTurn = turnCheck;
+
+                Console.WriteLine("Next TurnCheck {0} | Gamespeed mod: {1}", finalTurn.ToString(), gameSpeed.ToString());
             }
-            
-            else if ((int)turn < turnCheck * turnMulti)
-            {
-                
-                Console.WriteLine("No Scoring | Multi {0}", turnMulti.ToString());
-
-            }
-
-            int finalTurn = turnCheck * (turnMulti + 1);
-
-            Console.WriteLine("Next TurnCheck {0} | Gamespeed mod: {1}", finalTurn.ToString(), gamespeed.ToString());
-            
         } 
 
     }
@@ -133,7 +195,10 @@ namespace shakee.Humankind.FameByScoring
 
         public static void Raise (object sender, int empireIndex, int eraIndex, StaticString previousFactionName)
         {
-            ScoringRound.RoundScoring(empireIndex: empireIndex);
+            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "off"))
+            {
+                ScoringRound.RoundScoring(empireIndex: empireIndex);
+            }
         }
     }
 
@@ -149,6 +214,8 @@ namespace shakee.Humankind.FameByScoring
 		    GameOptionHelper.Initialize(new GameOptionInfo[]
 			{
 				FameByScoring.FameScoringOption,
+                FameByScoring.NumberScoringRounds,
+                FameByScoring.FameTurnMultiplier,
 			});
 			return true;
 		}

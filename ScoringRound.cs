@@ -62,35 +62,59 @@ namespace shakee.Humankind.FameByScoring
 
             int calc = 0;
             int numEmpires = Amplitude.Mercury.Sandbox.Sandbox.NumberOfMajorEmpires;
-            FixedPoint[,] arr;
-            var listCat = new List<object>();
-            listCat.Add((object)arrState);
-            listCat.Add((object)arrEconomy);
-            listCat.Add((object)arrMilitary);
-            listCat.Add((object)arrBuilding);
-
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < numEmpires; i++)
             {
-                calc = 0;
-                string[,] arrtmp = (string[,])listCat[i];
-                arr = FetchStuff(numEmpires, arrtmp, ref calc);
-                if (calc > numEmpires /2)
+                MajorEmpire empire = Amplitude.Mercury.Sandbox.Sandbox.Empires[i] as MajorEmpire;
+                if (empire.GetPropertyValue("EraLevel") >= 1)
                 {
-                    DistributeFame(numEmpires,empireIndex,calc,turn,arr);
+                    calc += 1;
                 }
+            }
+            if (calc >= numEmpires / 2 || empireIndex > -1)
+            {
+                FixedPoint[,] arr;
+                var listCat = new List<object>();
+                listCat.Add((object)arrState);
+                listCat.Add((object)arrEconomy);
+                listCat.Add((object)arrMilitary);
+                listCat.Add((object)arrBuilding);
+                FixedPoint[,] arrFame = new FixedPoint[10,3];
+                for (int i = 0; i < 4; i++)
+                {
+                    string[,] arrtmp = (string[,])listCat[i];
+                    arr = FetchStuff(numEmpires, arrtmp);
+                    //object arr2;
+                    DistributeFame(numEmpires,empireIndex,calc,turn,arr, out FixedPoint[,] arr2);
+
+                    for (int k = 0; k <= arr.GetUpperBound(0); k++)
+                    {
+                        arrFame[k,2] += arr2[k,2];
+                    }
+                    
+                    
+                }
+                Console.WriteLine("Total Fame Gains");
+                for (int k = 0; k < numEmpires; k++)
+                {
+                    Console.WriteLine("Empire: {0} | Fame +{1}",k,arrFame[k,2]);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No Scoring - " + calc.ToString() + " of required " + (numEmpires / 2).ToString() + " Empires. Total Empires: " + numEmpires.ToString());
             }
         } 
 
-        public static void DistributeFame (int numEmpires, int empireIndex, int calc, int turn, FixedPoint[,] arr, bool ranking = true)
+        public static void DistributeFame(int numEmpires, int empireIndex, int calc, int turn, FixedPoint[,] arr, out FixedPoint[,] arr2, bool ranking = true)
         {
-            
+            //arr2 = null;
             StringBuilder debugLine = new StringBuilder();
+            runDebug("Distributing Fame on Turn " + turn,1,ref debugLine);
             if(GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "false"))
             {
                 ranking = false;
             }
-            debugLine.AppendLine("");
-            debugLine.AppendLine("Used Fame Score Method: " + GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "false").ToString() + " | Ranking = " + ranking.ToString());
+            //debugLine.AppendLine("Used Fame Score Method: " + GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "false").ToString() + " | Ranking = " + ranking.ToString());
             FixedPoint[,] tmpArr = arr.OrderByDescending(n => n[1]);
             FixedPoint sum = 0;
             runDebug("EmpireRanking:",2,ref debugLine);
@@ -101,10 +125,10 @@ namespace shakee.Humankind.FameByScoring
                 //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
             }
 
-            famePoints = 20 + calc * 20;
+            // EraChange Scoring
             if (empireIndex != -1)
             {
-                
+                famePoints = 20 + calc * 20;
                 Empire empire = Amplitude.Mercury.Sandbox.Sandbox.Empires[empireIndex];
                 MajorEmpire MajEmpire = empire as MajorEmpire;
                 FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(empireIndex);
@@ -149,13 +173,14 @@ namespace shakee.Humankind.FameByScoring
                 //Console.WriteLine("Empireindex: {0} | StateValues {1} / {2} = {3}% | Fame(" + oldFame.ToString() + "): +{4} of {5} | FameGain Bonus " + vBonusFame.ToString(),empireIndex, arr[empireIndex,1], sum, ratioCalc(arr[empireIndex,1],sum) * 100,fameRatio,famePoints);
                 }
                 MajEmpire.SetEditablePropertyValue("FameScore",fameRatio * (1 + vBonusFame) + oldFame);
-
+                arr[empireIndex,2] += fameRatio;
+                
             }   
+            // Turn Scoring
             else
             {
                 
-                runDebug("Distributing Fame on Turn " + turn,1,ref debugLine);
-                
+                famePoints = 20 + calc * 20;
                 //Console.WriteLine(debugLine);
 
                 for (int i = 0; i < numEmpires; i++)
@@ -167,7 +192,7 @@ namespace shakee.Humankind.FameByScoring
                     FixedPoint oldFame = empire.GetPropertyValue("FameScore");
                     FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
                     FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
-                    if (ranking)
+                    if (ranking && vEraLevel > 0)
                     {
                         for (int j = 0; j <= tmpArr.GetUpperBound(0); j++)
                         {
@@ -201,17 +226,19 @@ namespace shakee.Humankind.FameByScoring
                     }
                    //Console.WriteLine("Empireindex: {0} | StateValues {1} / {2} = {3}% | Fame(" + oldFame.ToString() + "): +{4} of {5} | FameGain Bonus " + vBonusFame.ToString(),empireName, arr[i,1], sum, ratioCalc(arr[i,1],sum) * 100,fameRatio,famePoints);
                     empire.SetEditablePropertyValue("FameScore",fameRatio * (1 + vBonusFame) + oldFame);
-                    
+                    arr[i,2] += fameRatio;
                 }
-                Console.Write(debugLine);
-                debugLine.Clear();
+                
             }
+            arr2 = arr;
+            Console.Write(debugLine);
+            debugLine.Clear();
         }
 
-        public static FixedPoint[,] FetchStuff (int numEmpires, string[,] arrProperty, ref int calc, object array = null)
+        public static FixedPoint[,] FetchStuff (int numEmpires, string[,] arrProperty, object array = null)
         {
             StringBuilder debugLine = new StringBuilder();
-            FixedPoint[,] arr = new FixedPoint[10,2]{{0,0},{1,0},{2,0},{3,0},{4,0},{5,0},{6,0},{7,0},{8,0},{9,0}};
+            FixedPoint[,] arr = new FixedPoint[10,3]{{0,0,0},{1,0,0},{2,0,0},{3,0,0},{4,0,0},{5,0,0},{6,0,0},{7,0,0},{8,0,0},{9,0,0}};
 
              for (int i = 0; i < numEmpires; i++)
                 {
@@ -219,15 +246,6 @@ namespace shakee.Humankind.FameByScoring
                     MajorEmpire empire2 = Sandbox.MajorEmpires[i];
                     EmpireInfo empireInfoNew = R.Utils_GameUtils().GetCurrentEmpireInfo();
                     FactionDefinition newempireFaction = R.Utils_GameUtils().GetFactionDefinition(i);
-                    if (newempireFaction.EraIndex < 1)
-                    {
-                        //Console.WriteLine("Test EmpireInfo: {0} | Orientation: {1}",empire2.GetPropertyValue("FameScore").ToString(),newempireFaction.GameplayOrientation.ToString());
-                        continue;
-                    }
-                    else
-                    {
-                        calc += 1;
-                    }
                     float x = 0f;
                     float catchup = 0f;
                     FixedPoint vEraLevel = 0;
