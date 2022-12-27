@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
@@ -19,32 +20,15 @@ using Amplitude.Framework.Simulation.Collections;
 using Amplitude.Framework.Simulation.DataStructures;
 using Amplitude.Serialization;
 using Amplitude.Framework.Simulation;
+using HumankindModTool;
 
 namespace shakee.Humankind.FameByScoring
 {
     public class ScoringRound
     {
         static FixedPoint famePoints;
-        static int debuglevel = 2; // 0 = none, 1 = medium, 2 = incl. details
-
-        static string[,] arrtest = new string[16,3]{
-        {"CityCount","3","Expansionist"},
-        {"TerritoryCount","1","Expansionist"},
-        {"SumOfPopulation","0.25","Farmer"},
-        {"NumberOfEnactedCivic","1","Cultural"},
-        {"ResearchNet","0.05","Sciencist"},
-        {"NumberOfCulturallyControlledTerritory","1","Cultural"},
-        {"MoneyNet","0.05","Merchant"},
-        {"MoneyStock","0.03","Merchant"},
-        {"InfluenceNet","0.08","Cultural"},
-        {"InfluenceStock","0.05","Cultural"},
-        {"SumOfLuxuryResourceAccessCount","1","Merchant"},
-        {"DistrictCount","0.25","Builder"},
-        {"WonderCulturalClaimedCount","4","Builder"},
-        {"SumOfUnits","0.2","Warmonger"},
-        {"CapturedCityCount","2","Warmonger"},
-        {"SumOfStrategicResourceAccessCount","1","Warmonger"},
-        };
+        static int debuglevel = 1; // 0 = none, 1 = medium, 2 = incl. details
+        
         static string[,] arrState = new string[6,3]{
         {"CityCount","3","Expansionist"},
         {"TerritoryCount","1","Expansionist"},
@@ -75,28 +59,38 @@ namespace shakee.Humankind.FameByScoring
 
         public static void RoundScoring (int turn = -1, int empireIndex = -1)
         {
+
             int calc = 0;
             int numEmpires = Amplitude.Mercury.Sandbox.Sandbox.NumberOfMajorEmpires;
             FixedPoint[,] arr;
-            
-            arr = FetchStuff(numEmpires, arrState, ref calc);
-            DistributeFame(numEmpires,empireIndex,calc,turn,arr);
-            calc = 0;
-            arr = FetchStuff(numEmpires, arrEconomy, ref calc);
-            DistributeFame(numEmpires,empireIndex,calc,turn,arr);
-            calc = 0;
-            arr = FetchStuff(numEmpires, arrMilitary, ref calc);
-            DistributeFame(numEmpires,empireIndex,calc,turn,arr);
-            calc = 0;
-            arr = FetchStuff(numEmpires, arrBuilding, ref calc);
-            DistributeFame(numEmpires,empireIndex,calc,turn,arr);
+            var listCat = new List<object>();
+            listCat.Add((object)arrState);
+            listCat.Add((object)arrEconomy);
+            listCat.Add((object)arrMilitary);
+            listCat.Add((object)arrBuilding);
 
+            for (int i = 0; i < 4; i++)
+            {
+                calc = 0;
+                string[,] arrtmp = (string[,])listCat[i];
+                arr = FetchStuff(numEmpires, arrtmp, ref calc);
+                if (calc > numEmpires /2)
+                {
+                    DistributeFame(numEmpires,empireIndex,calc,turn,arr);
+                }
+            }
         } 
 
         public static void DistributeFame (int numEmpires, int empireIndex, int calc, int turn, FixedPoint[,] arr, bool ranking = true)
         {
+            
             StringBuilder debugLine = new StringBuilder();
+            if(GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "false"))
+            {
+                ranking = false;
+            }
             debugLine.AppendLine("");
+            debugLine.AppendLine("Used Fame Score Method: " + GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "false").ToString() + " | Ranking = " + ranking.ToString());
             FixedPoint[,] tmpArr = arr.OrderByDescending(n => n[1]);
             FixedPoint sum = 0;
             runDebug("EmpireRanking:",2,ref debugLine);
@@ -214,7 +208,7 @@ namespace shakee.Humankind.FameByScoring
             }
         }
 
-        public static FixedPoint[,] FetchStuff (int numEmpires, string[,] arrProperty, ref int calc)
+        public static FixedPoint[,] FetchStuff (int numEmpires, string[,] arrProperty, ref int calc, object array = null)
         {
             StringBuilder debugLine = new StringBuilder();
             FixedPoint[,] arr = new FixedPoint[10,2]{{0,0},{1,0},{2,0},{3,0},{4,0},{5,0},{6,0},{7,0},{8,0},{9,0}};

@@ -43,7 +43,7 @@ namespace shakee.Humankind.FameByScoring
 		{
             
 			ControlType = 0,
-			Key = "GameOption_FameScoring",
+			Key = "GameOption_shakee_FameScoring",
 			DefaultValue = "true",
 			Title = "Fame Distribution",
 			Description = "Sets how fame is generated and distributed.",
@@ -52,13 +52,13 @@ namespace shakee.Humankind.FameByScoring
 			{
                 new GameOptionStateInfo{
                     Title = "Fame by Ratio",
-                    Description = "Fame is distributed by your ratio in comparison to all other Empires in the scoring categories. The fame gains can vary wildy between empires",
-                    Value = "true"
+                    Description = "Fame is distributed by your ratio in comparison to all other Empires in the scoring categories. The fame gains can vary wildy between empires.",
+                    Value = "false"
                 },
                 new GameOptionStateInfo{
-                    Title = "Fame by Rannking",
-                    Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame. 1st = 120; 2nd = 110; 3rd = 100; all other 90",
-                    Value = "false"
+                    Title = "Fame by Ranking",
+                    Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame. 1st = 120; 2nd = 110; 3rd = 100; all other 90.",
+                    Value = "true"
                 },
 			}
 		};
