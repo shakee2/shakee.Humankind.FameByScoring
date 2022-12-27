@@ -1,0 +1,7 @@
+F:\SteamLibrary\steamapps\common\Humankind\BepInEx\plugins\shakee.Humankind.FameByScoring.dll
+C:\Users\szudr\Documents\Humankind Mod Tool\Projects\shakee.Humankind.FameByScoring\obj\Debug\shakee.Humankind.FameByScoring.csproj.AssemblyReference.cache
+C:\Users\szudr\Documents\Humankind Mod Tool\Projects\shakee.Humankind.FameByScoring\obj\Debug\shakee.Humankind.FameByScoring.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\szudr\Documents\Humankind Mod Tool\Projects\shakee.Humankind.FameByScoring\obj\Debug\shakee.Humankind.FameByScoring.AssemblyInfoInputs.cache
+C:\Users\szudr\Documents\Humankind Mod Tool\Projects\shakee.Humankind.FameByScoring\obj\Debug\shakee.Humankind.FameByScoring.AssemblyInfo.cs
+C:\Users\szudr\Documents\Humankind Mod Tool\Projects\shakee.Humankind.FameByScoring\obj\Debug\shakee.Humankind.FameByScoring.csproj.CoreCompileInputs.cache
+C:\Users\szudr\Documents\Humankind Mod Tool\Projects\shakee.Humankind.FameByScoring\obj\Debug\shakee.Humankind.FameByScoring.dll
