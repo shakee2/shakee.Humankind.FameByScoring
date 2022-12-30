@@ -21,6 +21,10 @@ using Amplitude.Mercury.UI.Helpers;
 using Amplitude.Mercury.UI;
 
 namespace shakee.Humankind.FameByScoring
+
+//
+// Ranking Alternative Test
+//
 {
 
     [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.0.0")]
