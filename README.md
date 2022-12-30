@@ -11,7 +11,7 @@ You gain fame by being compared on category level. The ratio you have of the tot
 You gain fame by being at a certain place in each category. Only the first 3 places gain additional fame. Generally, the fame the empires gain is more closely together.
 
 ## Categories
-Fame is gaine by being compared in different categories. Each categories sums together a number of different items which each has a different weight.
+Fame is gained by being compared in different categories. Each categories sums together a number of different items which each has a different weight.
 
 - Military
 - Buildings

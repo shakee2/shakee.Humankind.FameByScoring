@@ -39,13 +39,15 @@ namespace shakee.Humankind.FameByScoring
         //public static FameByScoring Instance;
         public const string GameOptionGroup_LobbyPaceOptions = "GameOptionGroup_LobbyPaceOptions";   
 
+#region GameoOptions
 		public static GameOptionInfo FameScoringOption = new GameOptionInfo
 		{
             
 			ControlType = 0,
 			Key = "GameOption_shakee_FameScoring",
 			DefaultValue = "true",
-			Title = "Fame by Scoring Rounds Distribution",
+            editbleInGame = true,
+			Title = "[FAME] Fame by Scoring Rounds Distribution",
 			Description = "Sets how fame is generated and distributed. If activated, you gain fame every few turns and when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
@@ -62,7 +64,7 @@ namespace shakee.Humankind.FameByScoring
                 },
                 new GameOptionStateInfo{
                     Title = "Fame by Ranking",
-                    Description = "Fame is distributed by ranking. Depending on your ranking in descending order, you get a certain amount of fame. The fame gain is more evenly distributed.",
+                    Description = "Fame is distributed by ranking per category. Depending on your ranking in descending order, you get a certain amount of fame. The first 3 places get more fame. Uses the base fame setting. The fame gain is more evenly distributed.",
                     Value = "true"
                 },
 			}
@@ -73,7 +75,8 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_NumberFameScoring",
 			DefaultValue = "8",
-			Title = "Scoring Round",
+            editbleInGame = true,
+			Title = "[FAME] Scoring Rounds Turn",
 			Description = "Sets after how many turns a fame scoring round is triggered. Does not affect a fame scoring when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
@@ -107,8 +110,9 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_FameGainMultiplier",
 			DefaultValue = "1",
-			Title = "Fame Gain multiplier for Scoring Rounds",
-			Description = "Setting for adjusting the fame gain per Scoring Round. Default is 1x.",
+            editbleInGame = true,
+			Title = "[FAME] Scoring Rounds Fame modifier",
+			Description = "Setting for adjusting the fame gain per Scoring Round. Multiplies the base fame by this amount.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
@@ -144,26 +148,63 @@ namespace shakee.Humankind.FameByScoring
             
 			ControlType = 0,
 			Key = "GameOption_shakee_FameTurnMultiplier",
-			DefaultValue = "false",
-			Title = "Gamespeed Multiplier for Fame Scoring",
-			Description = "If enabled, the Scoring Turns will be modified by the gamespeed multiplier. Default is off.",
+			DefaultValue = "true",
+            editbleInGame = true,
+			Title = "[FAME] Fame Scoring Rounds GameSpeed modifier",
+			Description = "If enabled, the turn for scoring will be modified by the gamespeed multiplier.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
                 new GameOptionStateInfo{
                     Title = "On",
-                    Description = "Scoring turn will be modified by the gamespeed multiplier.",
+                    Description = "Turn trigger will be modified by the gamespeed multiplier.",
                     Value = "true"
                 },
                 new GameOptionStateInfo{
                     Title = "Off",
-                    Description = "Scoring turn won't be modified.",
+                    Description = "Turn trigger won't be modified.",
                     Value = "false"
                 },
             }
         };
+        public static GameOptionInfo FameBaseGain = new GameOptionInfo
+		{
+            
+			ControlType = 0,
+			Key = "GameOption_shakee_FameBaseGain",
+			DefaultValue = "20",
+            editbleInGame = true,
+			Title = "[FAME] Base Fame for Scoring Rounds",
+			Description = "Customize the base fame which is used for scoring rounds per scoring category. For Ratio it gets multiplied by number of empires. For Ranking it is used as the base fame gain.",
+			GroupKey = "GameOptionGroup_LobbyPaceOptions",
+			States = 
+			{
+                new GameOptionStateInfo{
+                    Title = "10",
+                    Description = "10 Fame.",
+                    Value = "10"
+                },
+                new GameOptionStateInfo{
+                    Title = "20",
+                    Description = "20 Fame.",
+                    Value = "20"
+                },
+                new GameOptionStateInfo{
+                    Title = "30",
+                    Description = "30 Fame.",
+                    Value = "30"
+                },
+                new GameOptionStateInfo{
+                    Title = "40",
+                    Description = "40 Fame.",
+                    Value = "40"
+                },
+            }
+        };
+#endregion
 
     }
+
     [HarmonyPatch(typeof(SimulationEvent_NewTurnBegin))]
 
     public class NewTurn_Patch 
@@ -175,7 +216,7 @@ namespace shakee.Humankind.FameByScoring
             if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "off"))
             {
                 
-                Console.WriteLine("Current Turn: {0}", turn.ToString());
+                //Console.WriteLine("Current Turn: {0}", turn.ToString());
                 float gameSpeed;
                 int gameOptionTurns = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
                 if (GameOptionHelper.CheckGameOption(FameByScoring.FameTurnMultiplier,"true"))
@@ -199,7 +240,7 @@ namespace shakee.Humankind.FameByScoring
 
                 if ((int)turn == turnCheck)
                 {
-                    Console.WriteLine("Round Scoring Needed");
+                    Console.WriteLine("Scoring Needed for Turn " + turn.ToString());
                     ScoringRound.RoundScoring(turn);
                     turnCheck += (int)turnTmp;
                 }
@@ -207,7 +248,7 @@ namespace shakee.Humankind.FameByScoring
                 else if ((int)turn < turnCheck)
                 {
                     
-                    Console.WriteLine("No Scoring");
+                    Console.WriteLine("No Scoring for Turn " + turn.ToString());
 
                 }
 
@@ -251,6 +292,7 @@ namespace shakee.Humankind.FameByScoring
                 FameByScoring.NumberScoringRounds,
                 FameByScoring.FameTurnMultiplier,
                 FameByScoring.FameGainMultiplier,
+                FameByScoring.FameBaseGain,
 			});
 			return true;
 		}

@@ -66,6 +66,10 @@ namespace HumankindModTool
                 option.Key = ++lastKey;
                 option.XmlSerializableName = gameOptionName;
                 option.name = gameOptionName;
+                if (optionVal.editbleInGame != false)
+                {
+                    option.IsEditableInGame = optionVal.editbleInGame; // edit
+                }
                 option.Default = optionVal.DefaultValue;
                 option.States = new OptionState[optionVal.States.Count];
                 for (int i = 0; i < option.States.Length; i++)
@@ -117,7 +121,7 @@ namespace HumankindModTool
                 optionMapper.name = gameOptionName;
                 optionMapper.XmlSerializableName = gameOptionName;
                 optionMapper.OptionFlags = OptionUIMapper.Flags.None;
-                optionMapper.ControlType = optionVal.ControlType;
+                optionMapper.ControlType = optionVal.ControlType;      
                 optionMapper.Title = $"%{gameOptionName}Title";
                 optionMapper.Description = $"%{gameOptionName}Description";
                 optionMapper.Initialize();

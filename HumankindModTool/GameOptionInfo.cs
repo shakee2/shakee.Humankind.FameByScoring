@@ -9,12 +9,12 @@ namespace HumankindModTool
     {
         public string Key { get; set; }
         public string GroupKey { get; set; }
+		public bool editbleInGame {get; set;} //edit
         public string Title { get; set; }
         public string Description { get; set; }
         public string DefaultValue { get; set; }
         public UIControlType ControlType { get; set; }
         public List<GameOptionStateInfo> States { get; set; } = new List<GameOptionStateInfo>();
     	
-		//States { get; set; } = new List<GameOptionStateInfo>();
 	}
 }
