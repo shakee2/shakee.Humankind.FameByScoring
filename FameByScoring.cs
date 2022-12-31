@@ -54,7 +54,7 @@ namespace shakee.Humankind.FameByScoring
             
 			ControlType = 0,
 			Key = "GameOption_shakee_FameScoring",
-			DefaultValue = "true",
+			DefaultValue = "2",
             editbleInGame = true,
 			Title = "[FAME] Fame by Scoring Rounds Distribution",
 			Description = "Sets how fame is generated and distributed. If activated, you gain fame every few turns and when an empire changes era.",
@@ -64,17 +64,22 @@ namespace shakee.Humankind.FameByScoring
                 new GameOptionStateInfo{
                     Title = "Deactivate",
                     Description = "Fame by Scoring Rounds is deactivated.",
-                    Value = "off"
+                    Value = "0"
                 },
                 new GameOptionStateInfo{
-                    Title = "Fame by Ratio",
-                    Description = "Fame is distributed by your ratio in comparison to all other Empires in the scoring categories. The fame gains can vary wildy between empires.",
-                    Value = "false"
+                    Title = "by Ratio",
+                    Description = "Fame is distributed by your ratio in comparison to all other Empires per category. The fame gains can vary wildy between empires.",
+                    Value = "1"
                 },
                 new GameOptionStateInfo{
-                    Title = "Fame by Ranking",
-                    Description = "Fame is distributed by ranking per category. Depending on your ranking in descending order, you get a certain amount of fame. The first 3 places get more fame. Uses the base fame setting. The fame gain is more evenly distributed.",
-                    Value = "true"
+                    Title = "by Rank per Category",
+                    Description = "Ranks are determined per category. Fame is distributed by your rank in each category. Depending on your ranking in descending order, you get a certain amount of fame. The first 3 places get more fame. Uses the base fame setting. The fame gain is more evenly distributed.",
+                    Value = "2"
+                },
+                new GameOptionStateInfo{
+                    Title = "by Rank per Property",
+                    Description = "Ranks are determined per property. Fame is distributed by your rank in each category. Depending on your ranking in descending order, you get a certain amount of fame. The first 3 places get more fame. Uses the base fame setting. The fame gain is even more evenly distributed.",
+                    Value = "3"
                 },
 			}
 		};
@@ -85,7 +90,7 @@ namespace shakee.Humankind.FameByScoring
 			Key = "GameOption_shakee_NumberFameScoring",
 			DefaultValue = "8",
             editbleInGame = true,
-			Title = "[FAME] Scoring Rounds Turn",
+			Title = "[FAME] Scoring Turns",
 			Description = "Sets after how many turns a fame scoring round is triggered. Does not affect a fame scoring when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
@@ -210,45 +215,64 @@ namespace shakee.Humankind.FameByScoring
                 },
             }
         };
-        public static GameOptionInfo EraStarSetting = new GameOptionInfo
+        public static GameOptionInfo EraStarSettingFame = new GameOptionInfo
 		{
             
 			ControlType = 0,
-			Key = "GameOption_shakee_EraStarSetting",
-			DefaultValue = "On",
+			Key = "GameOption_shakee_EraStarSettingFame",
+			DefaultValue = "True",
             editbleInGame = true,
-			Title = "[FAME] Era Star Setting",
-			Description = "Disables .",
+			Title = "[FAME] Era Star Fame Gain",
+			Description = "Setting for controlling fame gain from Era Stars.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
                 new GameOptionStateInfo{
-                    Title = "On",
-                    Description = "Fame from era stars are given like normal.",
-                    Value = "On"
-                },
-                new GameOptionStateInfo{
-                    Title = "Reduced",
-                    Description = "Era Star rewards are reduced by half.",
-                    Value = "Reduced"
+                    Title = "Default",
+                    Description = "Default as Vanilla",
+                    Value = "True"
                 },
                 new GameOptionStateInfo{
                     Title = "Off",
-                    Description = "Era Stars do not give fame.",
-                    Value = "Off"
+                    Description = "Disables fame from Era Stars",
+                    Value = "False"
+                },
+                new GameOptionStateInfo{
+                    Title = "0.25x",
+                    Description = "0.25x from Era Stars",
+                    Value = "0.25"
+                },
+                new GameOptionStateInfo{
+                    Title = "0.5x",
+                    Description = "0.50x from Era Stars",
+                    Value = "0.5"
+                },
+                new GameOptionStateInfo{
+                    Title = "0.75x",
+                    Description = "0.75x from Era Stars",
+                    Value = "0.75"
+                },
+                new GameOptionStateInfo{
+                    Title = "1.25x",
+                    Description = "1.25x from Era Stars",
+                    Value = "1.25"
+                },
+                new GameOptionStateInfo{
+                    Title = "1.5x",
+                    Description = "1.50x from Era Stars",
+                    Value = "1.5"
                 },
             }
         };
-
         
         public static GameOptionInfo EraStarSettingStars = new GameOptionInfo
 		{
-			ControlType = UIControlType.Toggle,
+			ControlType = 0,
 			Key = "GameOption_shakee_EraStarSettingStars",
 			DefaultValue = "True",
             editbleInGame = true,
-			Title = "[FAME] Gaining Era Stars",
-			Description = "Setting if the Gameplay Orientation (Farmer, Warmonger, etc.) should increase the Era Stars.",
+			Title = "[FAME] Era Stars Gain",
+			Description = "Setting for receiving the stars from the Era Stars. Disabling this will instead grant Era Stars by Fame Thresholds.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
@@ -276,7 +300,7 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPostfix]   
 
         public static void Raise (SimulationEvent_NewTurnBegin __instance, object sender, ushort turn) {
-            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "off"))
+            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "0"))
             {        
                 float gameSpeed;
                 int gameOptionTurns = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
@@ -317,8 +341,11 @@ namespace shakee.Humankind.FameByScoring
 
                 Console.WriteLine("Next TurnCheck {0} | Gamespeed mod: {1}", finalTurn.ToString(), gameSpeed.ToString());
             }
+            if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "False"))
+            {
+                FameThresholds.CheckThreshold();
+            }       
         } 
-
     }
 
 
@@ -331,9 +358,9 @@ namespace shakee.Humankind.FameByScoring
 
         public static void Raise (object sender, int empireIndex, int eraIndex, StaticString previousFactionName)
         {
-            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "off"))
+            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "0"))
             {
-                ScoringRound.RoundScoring(empireIndex: empireIndex);
+                ScoringRound.RoundScoring(empireIndex: empireIndex, scoring: false);
             }
         }
     }
@@ -354,8 +381,10 @@ namespace shakee.Humankind.FameByScoring
                 FameByScoring.FameTurnMultiplier,
                 FameByScoring.FameGainMultiplier,
                 FameByScoring.FameBaseGain,
-                FameByScoring.EraStarSetting,
                 FameByScoring.EraStarSettingStars,
+                FameByScoring.EraStarSettingFame,
+
+
 			});
 			return true;
 		}
@@ -370,12 +399,11 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPrefix]
         public static bool TryEarnEraStar_One(DepartmentOfDevelopment __instance, ref EraStarInfo eraStarInfo)
 		{
-            if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSetting, "On"))
-            {
-                return true;
-            }
-            else
-            {
+            // if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSetting, "On"))
+            // {
+            //     return true;
+            // }
+            
                 if (eraStarInfo.Thresholds == null)
                 {
                     return false;
@@ -390,42 +418,51 @@ namespace shakee.Humankind.FameByScoring
                 }
             Console.WriteLine("Getting Era Stars - Turn " + R.SandboxManager_Sandbox().Turn().ToString());
                 //eraStarInfo.CurrentReward
-                if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSetting, "Reduced"))
+                if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "True"))
                 {
-                    FameByScoring_Helper.AccumulateFame_New(R.majorEmpire(__instance), eraStarInfo.CurrentReward * 0.5f);
+                    FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                    R.majorEmpire(__instance).FameScore.Value -= x;
+                    R.majorEmpire(__instance).FameScore.Value += x;          
+                    ScoringRound.runDebug("Empire " + R.majorEmpire(__instance).Index().ToString() + " gains +" + x.ToString() + " Fame from " + eraStarInfo.EraStarDefinitionName.ToString(), 2);          
+                    //FameByScoring_Helper.AccumulateFame_New(R.majorEmpire(__instance), eraStarInfo.CurrentReward * 0.5f);
                 }
-                else if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSetting, "On"))
+                else if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "False"))
                 {
-                    FameByScoring_Helper.AccumulateFame_New(R.majorEmpire(__instance), eraStarInfo.CurrentReward);
+                    FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                    R.majorEmpire(__instance).FameScore.Value -= x;
+                    //FameByScoring_Helper.AccumulateFame_New(R.majorEmpire(__instance), eraStarInfo.CurrentReward);
                 }
                 else
                 {
-                    
+                    FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value) * (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame)); 
+                    R.majorEmpire(__instance).FameScore.Value += eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value) * (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame)); 
+                    ScoringRound.runDebug("Empire " + R.majorEmpire(__instance).Index().ToString() + " gains +" + x.ToString() + " Fame from " + eraStarInfo.EraStarDefinitionName.ToString(), 2);               
                 }
-                eraStarInfo.UnlockTurn[eraStarInfo.Level] = R.SandboxManager_Sandbox().Turn();
-                eraStarInfo.UnlockedRewards[eraStarInfo.Level] = eraStarInfo.CurrentRewardWithFameBonus;
-            Console.WriteLine("Level " + eraStarInfo.EraStarDefinitionName.ToString() + " | Rewards: " +eraStarInfo.UnlockedRewards[eraStarInfo.Level].ToString());
+
+            //     eraStarInfo.UnlockTurn[eraStarInfo.Level] = R.SandboxManager_Sandbox().Turn();
+            //     eraStarInfo.UnlockedRewards[eraStarInfo.Level] = eraStarInfo.CurrentRewardWithFameBonus;
+            // Console.WriteLine("Level " + eraStarInfo.EraStarDefinitionName.ToString() + " | Rewards: " +eraStarInfo.UnlockedRewards[eraStarInfo.Level].ToString());
             
-                R.SimulationEvent_FameScoreChanged_Raise(__instance, R.majorEmpire(__instance), (int)eraStarInfo.CurrentReward);
-                eraStarInfo.Level++;
+            //     R.SimulationEvent_FameScoreChanged_Raise(__instance, R.majorEmpire(__instance), (int)eraStarInfo.CurrentReward);
+            //     eraStarInfo.Level++;
                 
                 //var eraStarDefinitionDatabase = Databases.GetDatabase<EraStarDefinition>();
-                if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "True"))
+                if (!GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "True"))
                 {
-                    R.majorEmpire(__instance).EraStarsCount.Value += 1;
-                    R.majorEmpire(__instance).SumOfEraStars.Value += 1;
+                    R.majorEmpire(__instance).EraStarsCount.Value -= 1;
+                    R.majorEmpire(__instance).SumOfEraStars.Value -= 1;
                 }
-                EraStarDefinition value = ScriptableObject.CreateInstance<EraStarDefinition>();
-                value = eraStarDefinitionDatabase.GetValue(eraStarInfo.EraStarDefinitionName);
+            //     EraStarDefinition value = ScriptableObject.CreateInstance<EraStarDefinition>();
+            //     value = eraStarDefinitionDatabase.GetValue(eraStarInfo.EraStarDefinitionName);
                 
-            Console.WriteLine("GameplayOri: {0} | Name: {1} | MaxReward: {3}",value.GameplayOrientation.ToString(), value.Name.ToString(), value.MaxFameReward.ToString());
-            Console.WriteLine("Threshold: " + eraStarInfo.Thresholds.ToString());
-                R.ComputeEraStarRewards(value, ref eraStarInfo);
-                R.SimulationEvent_EraStarEarned_Raise(__instance, eraStarInfo.EraStarDefinitionName, eraStarInfo.Level - 1, R.majorEmpire(__instance).Index());
-                R.SetupEvolutionPeriodicNotificationIfRequired();
+            // Console.WriteLine("GameplayOri: {0} | Name: {1} | MaxReward: {3}",value.GameplayOrientation.ToString(), value.Name.ToString(), value.MaxFameReward.ToString());
+            // Console.WriteLine("Threshold: " + eraStarInfo.Thresholds.ToString());
+            //     R.ComputeEraStarRewards(value, ref eraStarInfo);
+            //     R.SimulationEvent_EraStarEarned_Raise(__instance, eraStarInfo.EraStarDefinitionName, eraStarInfo.Level - 1, R.majorEmpire(__instance).Index());
+            //     R.SetupEvolutionPeriodicNotificationIfRequired();
 
-                return false;
-            }
+                return true;
+            
 	  	}
     }
 }
