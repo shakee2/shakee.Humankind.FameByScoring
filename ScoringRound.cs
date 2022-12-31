@@ -59,6 +59,8 @@ namespace shakee.Humankind.FameByScoring
 
         public static void RoundScoring (int turn = -1, int empireIndex = -1)
         {
+            turn = R.SandboxManager_Sandbox().Turn();
+            
             int calc = 0;   
             int numEmpires = Amplitude.Mercury.Sandbox.Sandbox.NumberOfMajorEmpires;
             FixedPoint[,] arrFame = new FixedPoint[numEmpires,3];                   
@@ -127,19 +129,19 @@ namespace shakee.Humankind.FameByScoring
                     {
                         if (j == 0)
                         {
-                            arrRank[i,1] += 16;
+                            arrRank[i,1] += 7;
                         }
                         else if (j == 1)
                         {
-                            arrRank[i,1] += 14;
+                            arrRank[i,1] += 5;
                         }
                         else if (j == 2)
                         {
-                            arrRank[i,1] += 12;
+                            arrRank[i,1] += 3;
                         }
                         else
                         {
-                            arrRank[i,1] += 10;
+                            arrRank[i,1] += 1;
                         }
                     }
                 }            
@@ -157,15 +159,14 @@ namespace shakee.Humankind.FameByScoring
             }
             float fameMulti = Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.FameGainMultiplier));
             Console.WriteLine(fameMulti.ToString());
-            //debugLine.AppendLine("Used Fame Score Method: " + GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "false").ToString() + " | Ranking = " + ranking.ToString());
+            
             FixedPoint[,] tmpArr = arr.OrderByDescending(n => n[1]);
             FixedPoint sum = 0;
             runDebug("EmpireRanking:",2);
             for (int k = 0; k < numEmpires; k++)
             {
                 sum += tmpArr[k,1];
-                runDebug("Empire " + tmpArr[k,0] + " with Value: " + tmpArr[k,1], 2);
-                //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
+                runDebug("Empire " + tmpArr[k,0] + " with Value: " + tmpArr[k,1], 2);                
             }
             FixedPoint famePoints = calc * baseFame;
 

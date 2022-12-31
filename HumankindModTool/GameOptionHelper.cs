@@ -138,7 +138,6 @@ namespace HumankindModTool
             }
         }
 
-		// Token: 0x0400000B RID: 11
-		//private static IGameOptionsService _gameOptions;
+		
 	}
 }

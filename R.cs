@@ -7,6 +7,7 @@ using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.Sandbox;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.UI;
+using Amplitude.Mercury.Data;
 using Amplitude.Mercury.UI.Helpers;
 
 namespace shakee.Humankind.FameByScoring
@@ -19,6 +20,10 @@ namespace shakee.Humankind.FameByScoring
 		{
 			return (MajorEmpire)R.DepartmentOfReligion_majorEmpire_FieldInfo.GetValue(self);
 		}
+		public static MajorEmpire majorEmpire(this DepartmentOfDevelopment self)
+		{
+			return (MajorEmpire)R.DepartmentOfDevelopment_majorEmpire_FieldInfo.GetValue(self);
+		}
 
 		// Token: 0x06000106 RID: 262 RVA: 0x00005E2E File Offset: 0x0000402E
 		public static void majorEmpire(this DepartmentOfReligion self, MajorEmpire value)
@@ -26,6 +31,10 @@ namespace shakee.Humankind.FameByScoring
 			R.DepartmentOfReligion_majorEmpire_FieldInfo.SetValue(self, value);
 		}
 
+		public static void majorEmpire(this DepartmentOfDevelopment self, MajorEmpire value)
+		{
+			R.DepartmentOfDevelopment_majorEmpire_FieldInfo.SetValue(self, value);
+		}
 		// Token: 0x06000107 RID: 263 RVA: 0x00005E40 File Offset: 0x00004040
 		public static DepartmentOfScience DepartmentOfScience(this MajorEmpire self)
 		{
@@ -136,6 +145,10 @@ namespace shakee.Humankind.FameByScoring
 		public static void Index(this Empire self, int value)
 		{
 			R.Empire_Index_FieldInfo.SetValue(self, value);
+		}
+		public static void Index(this MajorEmpire self, int value)
+		{
+			R.MajorEmpire_Index_FieldInfo.GetValue(self);
 		}
 
 		// Token: 0x06000116 RID: 278 RVA: 0x00006028 File Offset: 0x00004228
@@ -265,6 +278,34 @@ namespace shakee.Humankind.FameByScoring
 			});
 		}
 
+		public static void SimulationEvent_FameScoreChanged_Raise(object sender, MajorEmpire majorEmpire, int fameGain)
+		{
+			R.SimulationEvent_FameScoreChanged_Raise_MethodInfo.Invoke(null, new object[]
+			{
+				sender,
+				majorEmpire,
+				fameGain
+			});
+		}
+		public static void SimulationEvent_EraStarEarned_Raise(object sender, StaticString eraStarDefinitionName, int unlockedLevel, int empireIndex)
+		{
+			R.SimulationEvent_EraStarEarned_Raise_MethodInfo.Invoke(null, new object[]
+			{
+				sender,
+				eraStarDefinitionName,
+				unlockedLevel,
+				empireIndex,
+			});
+		}
+
+		public static void SetupEvolutionPeriodicNotificationIfRequired()
+		{
+			R.DepartmentOfDevelopment_SetupEvolutionPeriodicNotificationIfRequired.Invoke(null, new object[]
+			{
+				
+			});
+		}
+
 		// Token: 0x06000127 RID: 295 RVA: 0x000062B0 File Offset: 0x000044B0
 		public static void CreateCompetitiveDeedInfoAt(this CompetitiveDeedsManager self, StaticString competitiveDeedDefinitionName, StaticString deedDefinitionName, FixedPoint gain, int index, out CompetitiveDeedInfo result)
 		{
@@ -277,7 +318,26 @@ namespace shakee.Humankind.FameByScoring
 			});
 			result = (CompetitiveDeedInfo)r;
 		}
+		public static void AccumulateFame(this DepartmentOfDevelopment self, FixedPoint gain, out DepartmentOfDevelopment result)
+		{
+			object r = R.DeptDevelop_AccumulateFame.Invoke(self, new object[]
+			{
 
+				gain,
+
+			});
+			result = (DepartmentOfDevelopment)r;
+		}
+		public static void ComputeEraStarRewards(Amplitude.Mercury.Data.Simulation.EraStarDefinition eraStarDefinition, ref EraStarInfo eraStarInfo)
+		{
+			object r = R.DepartmentOfDevelopment_ComputeEraStarRewards.Invoke(null, new object[]
+			{
+				eraStarDefinition,
+				eraStarInfo,
+			});
+
+		}
+		
 		// Token: 0x06000128 RID: 296 RVA: 0x00006304 File Offset: 0x00004504
 		public static ReligionSnapshot ReligionSnapshot()
 		{
@@ -334,6 +394,7 @@ namespace shakee.Humankind.FameByScoring
 		// Token: 0x0400006F RID: 111
 		private static FieldInfo DepartmentOfReligion_majorEmpire_FieldInfo = typeof(DepartmentOfReligion).GetField("majorEmpire", BindingFlags.Instance | BindingFlags.NonPublic);
 
+		private static FieldInfo DepartmentOfDevelopment_majorEmpire_FieldInfo = typeof(DepartmentOfDevelopment).GetField("majorEmpire", BindingFlags.Instance | BindingFlags.NonPublic);
 		// Token: 0x04000070 RID: 112
 		private static FieldInfo MajorEmpire_DepartmentOfScience_FieldInfo = typeof(MajorEmpire).GetField("DepartmentOfScience", BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -386,6 +447,8 @@ namespace shakee.Humankind.FameByScoring
 		// Token: 0x04000079 RID: 121
 		private static FieldInfo Empire_Index_FieldInfo = typeof(Empire).GetField("Index", BindingFlags.Instance | BindingFlags.NonPublic);
 
+		private static FieldInfo MajorEmpire_Index_FieldInfo = typeof(MajorEmpire).GetField("Index", BindingFlags.Instance | BindingFlags.NonPublic);
+
 		// Token: 0x0400007A RID: 122
 		private static FieldInfo SandboxManager_Sandbox_FieldInfo = typeof(SandboxManager).GetField("Sandbox", BindingFlags.Static | BindingFlags.NonPublic);
 
@@ -435,6 +498,20 @@ namespace shakee.Humankind.FameByScoring
 			typeof(int)
 		}, null);
 
+		private static MethodInfo SimulationEvent_FameScoreChanged_Raise_MethodInfo = typeof(SimulationEvent_FameScoreChanged).GetMethod("Raise", BindingFlags.Static | BindingFlags.Public, null, new Type[]
+		{
+			typeof(object),
+			typeof(MajorEmpire),
+			typeof(int)
+		}, null);
+		private static MethodInfo SimulationEvent_EraStarEarned_Raise_MethodInfo = typeof(SimulationEvent_EraStarEarned).GetMethod("Raise", BindingFlags.Static | BindingFlags.Public, null, new Type[]
+		{
+			typeof(object),
+			typeof(StaticString),
+			typeof(int),
+			typeof(int)
+		}, null);
+
 		// Token: 0x04000086 RID: 134
 		private static MethodInfo CompetitiveDeedsManager_CreateCompetitiveDeedInfoAt_MethodInfo_StaticString_StaticString_FixedPoint_Int32 = typeof(CompetitiveDeedsManager).GetMethod("CreateCompetitiveDeedInfoAt", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[]
 		{
@@ -443,6 +520,23 @@ namespace shakee.Humankind.FameByScoring
 			typeof(FixedPoint),
 			typeof(int)
 		}, null);
+
+		private static MethodInfo DeptDevelop_AccumulateFame = typeof(DepartmentOfDevelopment).GetMethod("AccumulateFame", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[]
+		{
+			typeof(FixedPoint),
+		}, null);
+
+		private static MethodInfo DepartmentOfDevelopment_ComputeEraStarRewards = typeof(DepartmentOfDevelopment).GetMethod("ComputeEraStarRewards", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[]
+		{
+			typeof(object),
+			typeof(object),
+		}, null);
+		
+		private static MethodInfo DepartmentOfDevelopment_SetupEvolutionPeriodicNotificationIfRequired = typeof(DepartmentOfDevelopment).GetMethod("SetupEvolutionPeriodicNotificationIfRequired", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[]
+		{
+		
+		}, null);
+
 
 		// Token: 0x04000087 RID: 135
 		private static FieldInfo Snapshots_ReligionSnapshot_FieldInfo = typeof(Snapshots).GetField("ReligionSnapshot", BindingFlags.Static | BindingFlags.Public);
