@@ -326,7 +326,7 @@ namespace shakee.Humankind.FameByScoring
                 if ((int)turn == turnCheck)
                 {
                     Console.WriteLine("Scoring Needed for Turn " + turn.ToString());
-                    ScoringRound.RoundScoring(turn);
+                    ScoringRound.RoundScoring(true, turn);
                     turnCheck += (int)turnTmp;
                 }
                 
@@ -360,7 +360,7 @@ namespace shakee.Humankind.FameByScoring
         {
             if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "0"))
             {
-                ScoringRound.RoundScoring(empireIndex: empireIndex, scoring: false);
+                ScoringRound.RoundScoring(false, empireIndex: empireIndex);
             }
         }
     }
