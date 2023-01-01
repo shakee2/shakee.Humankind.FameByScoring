@@ -351,6 +351,7 @@ namespace shakee.Humankind.FameByScoring
                 runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1], 2);
                 //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
             }
+            float steps = 0.20f;
             if (empireIndex == -1)
             {
                 runDebug("Famegain for Scoring Round", 2);
@@ -361,29 +362,22 @@ namespace shakee.Humankind.FameByScoring
                     FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(i);
                     string empireName = empireFaction.name;
 
-
                     FixedPoint fameGain;
                     FixedPoint oldFame = empire.GetPropertyValue("FameScore");
                     FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
                     FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
                     //runDebug("Assigned Values",2);
+                    int numRanks = (int)Math.Ceiling((decimal)numEmpires / 2) + 1;
+                    fameGain = baseFame;
                     if (ranking >= 2)
                     {
-                        if ((int)tmpArr[0,0] == i)
+                        for (int j = 0; j < numRanks; j++)
                         {
-                            fameGain = baseFame * 1.75f;
-                        }
-                        else if ((int)tmpArr[1,0] == i)
-                        {
-                            fameGain = baseFame * 1.50f;                        
-                        }
-                        else if ((int)tmpArr[2,0] == i)
-                        {
-                            fameGain = baseFame * 1.25f;
-                        }
-                        else
-                        {
-                            fameGain = baseFame;
+                            if ((int)tmpArr[j,0] == i)
+                            {
+                                fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
+                                runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
+                            }                            
                         }
                     }
                     else
@@ -410,23 +404,17 @@ namespace shakee.Humankind.FameByScoring
                 FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
                 FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
                 //runDebug("Assigned Values",2);
+                int numRanks = (int)Math.Ceiling((decimal)numEmpires / 2) + 1;
+                fameGain = baseFame;
                 if (ranking >= 2)
                 {
-                    if ((int)tmpArr[0,0] == empireIndex)
-                    {
-                        fameGain = baseFame * 1.3f;
-                    }
-                    else if ((int)tmpArr[1,0] == empireIndex)
-                    {
-                        fameGain = baseFame * 1.2f;                        
-                    }
-                    else if ((int)tmpArr[2,0] == empireIndex)
-                    {
-                        fameGain = baseFame * 1.1f;
-                    }
-                    else
-                    {
-                        fameGain = baseFame;
+                    for (int j = 0; j < numRanks; j++)
+                    {                    
+                        if ((int)tmpArr[j,0] == empireIndex)
+                        {
+                            fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
+                            runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
+                        }                            
                     }
                 }
                 else
