@@ -18,7 +18,6 @@ namespace shakee.Humankind.FameByScoring
         public MajorEmpire empire {get; set;}
         public int empireIndex {get; set;}
         public FixedPoint [,] lastFameScoring {get; set;}
-        public FixedPoint lastFameGain {get; set;}
         public FixedPoint lastFameScoreEraChange {get; set; }
         public List<string> listRanking = new List<string> {
                 "1st", 
@@ -36,7 +35,6 @@ namespace shakee.Humankind.FameByScoring
 
 		public MajorEmpireExtension(MajorEmpire empire)
 		{
-			lastFameGain = 0;
             lastFameScoreEraChange = 0;
             empireIndex = empire.Index();
             this.empire = empire;
@@ -45,7 +43,6 @@ namespace shakee.Humankind.FameByScoring
 
         public void Serialize(Serializer serializer)        
         {			
-            lastFameGain = serializer.SerializeElement("lastFameGain", lastFameGain);
             lastFameScoreEraChange = serializer.SerializeElement("lastFameScoreEraChange", lastFameScoreEraChange);
             listRanking = serializer.SerializeElement("listRanking", listRanking);
             //listScoring = serializer.SerializeElement("listScoring", listScoring);
