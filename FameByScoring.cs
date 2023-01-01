@@ -254,7 +254,7 @@ namespace shakee.Humankind.FameByScoring
 			Key = "GameOption_shakee_EraStarSettingStars",
 			DefaultValue = "True",
             editbleInGame = true,
-			Title = "[FAME] Era Stars: Gain Method",
+			Title = "[FAME] Era Stars: Star Gain Method",
 			Description = "Setting for changing how era stars are gained. Default or a new method depending on your current fame score. When changing era, the new thresholds are always current famescore + threashold.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
