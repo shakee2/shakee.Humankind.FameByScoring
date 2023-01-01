@@ -27,6 +27,7 @@ Fame is gained by being compared in different categories. Each categories sums t
 
 ## Options
 There are several game options in the pacing menu to customize your game.
+Testupdate
 
 #### Options for gaining Era Stars and their fame (vanilla, with modifier, only by)
 #### Options for customizing the Scoring Rounds (fame amount, round number, fame multiplier, etc.)
