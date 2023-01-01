@@ -1,26 +1,14 @@
 using System;
-using System.Text;
+
 using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Reflection;
-using BepInEx;
-using BepInEx.Configuration;
+
 using HarmonyLib;
 using Amplitude;
-using Amplitude.Mercury;
+
 using Amplitude.Mercury.Simulation;
-using Amplitude.Mercury.Data.Simulation;
-using Amplitude.Mercury.Data.World;
-using Amplitude.Mercury.Interop;
-using Amplitude.Mercury.Sandbox;
-using Amplitude.Mercury.Terrain;
-using Amplitude.Mercury.UI.Helpers;
-using Amplitude.Framework.Simulation.Collections;
-using Amplitude.Framework.Simulation.DataStructures;
+
 using Amplitude.Serialization;
-using Amplitude.Framework.Simulation;
-using HumankindModTool;
+
 
 namespace shakee.Humankind.FameByScoring
 {

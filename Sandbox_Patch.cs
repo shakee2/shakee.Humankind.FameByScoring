@@ -1,19 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Amplitude.Mercury.Simulation;
 using HarmonyLib;
 using Amplitude.Mercury.Sandbox;
-using Amplitude.Framework;
+
 using Amplitude;
-//using Amplitude.Mercury.Game;
-using Amplitude.Framework.Session;
-//using Amplitude.Mercury;
-using System.Reflection;
-//using Amplitude.Mercury.Interop;
-using Amplitude.Framework.Networking;
-using Amplitude.Framework.Simulation;
-using Amplitude.Serialization;
+
 using Amplitude.Framework.Storage;
 
 namespace shakee.Humankind.FameByScoring

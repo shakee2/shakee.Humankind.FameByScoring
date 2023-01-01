@@ -1,25 +1,7 @@
 using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
-using System.Reflection;
-using BepInEx;
-using BepInEx.Configuration;
-using HarmonyLib;
 using Amplitude;
-using Amplitude.Mercury;
 using Amplitude.Mercury.Simulation;
-using Amplitude.Mercury.Data.Simulation;
-using Amplitude.Mercury.Data.World;
-using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.Sandbox;
-using Amplitude.Mercury.Terrain;
-using Amplitude.Mercury.UI.Helpers;
-using Amplitude.Framework.Simulation.Collections;
-using Amplitude.Framework.Simulation.DataStructures;
-using Amplitude.Serialization;
-using Amplitude.Framework.Simulation;
 using HumankindModTool;
 
 namespace shakee.Humankind.FameByScoring
@@ -48,9 +30,10 @@ namespace shakee.Humankind.FameByScoring
                 MajorEmpire empire = Sandbox.MajorEmpires[i];
                 var majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
                 Console.WriteLine("Last Saved Fame for Empire: " + empire.Index() + " with Fame: " + majorSave.lastFameScoreEraChange);
+
                 FixedPoint tmpFame = baseFame * baseFameMulti * 4;  // 20 * 1 * 4 = 80
                 FixedPoint checkturn = (FixedPoint.Floor((FixedPoint)50 / gameOptionTurns)); // 50 / 4 = 12
-                FixedPoint fameTreshold = FixedPoint.Floor(tmpFame * checkturn * gameSpeed); // 80 * 12 * 0,5 =                          
+                FixedPoint fameTreshold = FixedPoint.Floor(tmpFame * checkturn * gameSpeed); // 80 * 12 * 0,5 = 480                         
                 FixedPoint currentScore = FixedPoint.Floor((empire.FameScore.Value - majorSave.lastFameScoreEraChange) / fameTreshold);
                 FixedPoint currentStars = empire.EraStarsCount.Value;
 
@@ -58,7 +41,7 @@ namespace shakee.Humankind.FameByScoring
                 {
                     empire.EraStarsCount.Value += currentScore - currentStars;
                     empire.SumOfEraStars.Value += currentScore - currentStars;
-                    if (currentStars == 7)
+                    if (currentStars >= 7)
                     {
                         majorSave.lastFameScoreEraChange = empire.FameScore.Value;
                     }

@@ -1,36 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using BepInEx;
-using BepInEx.Configuration;
 using HarmonyLib;
 using Amplitude;
-using Amplitude.Mercury;
 using Amplitude.Mercury.Simulation;
-using UnityEngine;
 using Amplitude.Mercury.Data.Simulation;
-using Amplitude.Mercury.Data.World;
 using Amplitude.Mercury.Interop;
-using Amplitude.Mercury.Sandbox;
-using Amplitude.Mercury.Terrain;
 using HumankindModTool;
 using Amplitude.Framework.Options;
 using Amplitude.Mercury.Data.GameOptions;
-using Amplitude.Mercury.UI.Helpers;
-using Amplitude.Mercury.UI;
 
 using Amplitude.Framework;
 
 
-namespace shakee.Humankind.FameByScoring
-
-//
-// Ranking Alternative Test
-//
+namespace shakee.Humankind.FameByScoring  
 {
-
-    
 
     [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.0.0")]
     public class FameByScoring : BaseUnityPlugin
@@ -337,7 +320,7 @@ namespace shakee.Humankind.FameByScoring
 
                 int finalTurn = turnCheck;
 
-                Console.WriteLine("Next TurnCheck {0} | Gamespeed mod: {1}", finalTurn.ToString(), gameSpeed.ToString());
+                Console.WriteLine("Next TurnCheck {0}", finalTurn.ToString());
             }
             if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "False"))
             {
@@ -433,7 +416,8 @@ namespace shakee.Humankind.FameByScoring
                 else
                 {
                     FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value) * (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame)); 
-                    R.majorEmpire(__instance).FameScore.Value += eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value) * (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame)); 
+                    R.majorEmpire(__instance).FameScore.Value -= eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                    R.majorEmpire(__instance).FameScore.Value += x;
                     //ScoringRound.runDebug("Empire " + R.majorEmpire(__instance).Index().ToString() + " gains +" + x.ToString() + " Fame from " + eraStarInfo.EraStarDefinitionName.ToString(), 2);               
                 }
 

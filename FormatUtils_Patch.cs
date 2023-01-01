@@ -14,8 +14,7 @@ namespace shakee.Humankind.FameByScoring
     {
 		
         [HarmonyPatch("FormatAmount")]    
-        [HarmonyPostfix]  
-        
+        [HarmonyPostfix]          
         public void FormatAmount(string __result, FixedPoint amount, bool handleHighAmount = false, Rounding rounding = Rounding.Floor, bool signed = false, int decimals = 0, bool percentage = false)
         {
             Console.WriteLine("[shakee.Tooltip.Fix] Done");

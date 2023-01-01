@@ -12,8 +12,7 @@ namespace shakee.Humankind.FameByScoring
     {
         
         public static int debuglevel = 2; // 0 = none, 1 = medium, 2 = incl. details
-        public FixedPoint FameTotalGame;
-        
+                
         static string[,] arrState = new string[,]{
         {"CityCount","3","Expansionist"},
         {"TerritoryCount","1","Expansionist"},
@@ -93,47 +92,48 @@ namespace shakee.Humankind.FameByScoring
                     if (scoring)
                     {                        
                         DistributeFameRound(numEmpires, calc, ref arrRank, ref arrFame, ranking);
-                        for (int j = 0; j < numEmpires; j++)
-                        {
-                            empire = Sandbox.MajorEmpires[j];
-                            majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
-                            var = GetHistory(empire);
+                        FillCategoryHistory (numEmpires, arrRank, i);
+                        // for (int j = 0; j < numEmpires; j++)
+                        // {
+                        //     empire = Sandbox.MajorEmpires[j];
+                        //     majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
+                        //     var = GetHistory(empire);
 
-                            FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);                        
-                            for (int u = 0; u < numEmpires; u++) //check rank position
-                            {
-                                runDebug("Debug Empire Rank: " + tmpArr[u,0] + " with Value: " + tmpArr[u,1] + " | args: j = " + j + "; u = " + u, 3);
-                                if (j == (int)tmpArr[u,0]) // j = empire index; u = rank index
-                                {
-                                    var.categoryRank[i] = majorSave.listRanking[u];
-                                    runDebug("Debug Category Ranking: " + var.categoryRank[i],3);                                        
-                                }                                    
-                            }                                
+                        //     FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);                        
+                        //     for (int u = 0; u < numEmpires; u++) //check rank position
+                        //     {
+                        //         runDebug("Debug Empire Rank: " + tmpArr[u,0] + " with Value: " + tmpArr[u,1] + " | args: j = " + j + "; u = " + u, 3);
+                        //         if (j == (int)tmpArr[u,0]) // j = empire index; u = rank index
+                        //         {
+                        //             var.categoryRank[i] = majorSave.listRanking[u];
+                        //             runDebug("Debug Category Ranking: " + var.categoryRank[i],3);                                        
+                        //         }                                    
+                        //     }                                
                             
-                        }
+                        // }
                     }
                     else
                     {
                         DistributeFameRound(numEmpires, calc, ref arrRank, ref arrFame, ranking, empireIndex);
-                        //FillCategoryHistory (numEmpires, arrRank, i);
-                        for (int j = 0; j < numEmpires; j++)
-                        {
-                            empire = Sandbox.MajorEmpires[j];
-                            majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
-                            var = GetHistory(empire);
+                        FillCategoryHistory (numEmpires, arrRank, i);
+                        // for (int j = 0; j < numEmpires; j++)
+                        // {
+                        //     empire = Sandbox.MajorEmpires[j];
+                        //     majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
+                        //     var = GetHistory(empire);
 
-                            FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);                        
-                            for (int u = 0; u < numEmpires; u++) //check rank position
-                            {
-                                runDebug("Debug Empire Rank: " + tmpArr[u,0] + " with Value: " + tmpArr[u,1] + " | args: j = " + j + "; u = " + u, 3);
-                                if (j == (int)tmpArr[u,0]) // j = empire index; u = rank index
-                                {
-                                    var.categoryRank[i] = majorSave.listRanking[u];
-                                    runDebug("Debug Category Ranking: " + var.categoryRank[i],3);                                        
-                                }                                    
-                            }                                
+                        //     FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);                        
+                        //     for (int u = 0; u < numEmpires; u++) //check rank position
+                        //     {
+                        //         runDebug("Debug Empire Rank: " + tmpArr[u,0] + " with Value: " + tmpArr[u,1] + " | args: j = " + j + "; u = " + u, 3);
+                        //         if (j == (int)tmpArr[u,0]) // j = empire index; u = rank index
+                        //         {
+                        //             var.categoryRank[i] = majorSave.listRanking[u];
+                        //             runDebug("Debug Category Ranking: " + var.categoryRank[i],3);                                        
+                        //         }                                    
+                        //     }                                
                             
-                        }
+                        // }
                     }                 
 
                 }
@@ -151,10 +151,7 @@ namespace shakee.Humankind.FameByScoring
                 empire = Sandbox.MajorEmpires[0];
                 majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
                 runDebug("Last 3 Fame Values of Empire 0 - List Length: " + majorSave.FameHistoryList.Count.ToString(),2);
-                
-                empire = Sandbox.MajorEmpires[0];
-                majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
-                
+                                
                 if (majorSave.FameHistoryList.Count == 0)
                 {
                     runDebug("No Fame History yet... aborting",2);                        
@@ -374,15 +371,15 @@ namespace shakee.Humankind.FameByScoring
                     {
                         if ((int)tmpArr[0,0] == i)
                         {
-                            fameGain = baseFame * 1.3f;
+                            fameGain = baseFame * 1.75f;
                         }
                         else if ((int)tmpArr[1,0] == i)
                         {
-                            fameGain = baseFame * 1.2f;                        
+                            fameGain = baseFame * 1.50f;                        
                         }
                         else if ((int)tmpArr[2,0] == i)
                         {
-                            fameGain = baseFame * 1.1f;
+                            fameGain = baseFame * 1.25f;
                         }
                         else
                         {
