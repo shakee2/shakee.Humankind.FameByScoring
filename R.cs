@@ -146,9 +146,9 @@ namespace shakee.Humankind.FameByScoring
 		{
 			R.Empire_Index_FieldInfo.SetValue(self, value);
 		}
-		public static void Index(this MajorEmpire self, int value)
+		public static int Index(this MajorEmpire self)
 		{
-			R.MajorEmpire_Index_FieldInfo.GetValue(self);
+			return (int)R.MajorEmpire_Index_FieldInfo.GetValue(self);
 		}
 
 		// Token: 0x06000116 RID: 278 RVA: 0x00006028 File Offset: 0x00004228
@@ -328,6 +328,15 @@ namespace shakee.Humankind.FameByScoring
 			});
 			result = (DepartmentOfDevelopment)r;
 		}
+		public static void RefreshNextFactionInfos(this DepartmentOfDevelopment self)
+		{
+			object r = R.DepartmentOfDevelopment_RefreshNextFactionInfos.Invoke(self, new object[]
+			{
+
+			});
+
+		}
+		
 		public static void ComputeEraStarRewards(Amplitude.Mercury.Data.Simulation.EraStarDefinition eraStarDefinition, ref EraStarInfo eraStarInfo)
 		{
 			object r = R.DepartmentOfDevelopment_ComputeEraStarRewards.Invoke(null, new object[]
@@ -525,7 +534,11 @@ namespace shakee.Humankind.FameByScoring
 		{
 			typeof(FixedPoint),
 		}, null);
+		private static MethodInfo DepartmentOfDevelopment_RefreshNextFactionInfos = typeof(DepartmentOfDevelopment).GetMethod("RefreshNextFactionInfos", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[]
+		{
 
+		}, null);
+		
 		private static MethodInfo DepartmentOfDevelopment_ComputeEraStarRewards = typeof(DepartmentOfDevelopment).GetMethod("ComputeEraStarRewards", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[]
 		{
 			typeof(object),
