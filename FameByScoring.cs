@@ -164,7 +164,7 @@ namespace shakee.Humankind.FameByScoring
 			Key = "GameOption_shakee_FameTurnMultiplier",
 			DefaultValue = "true",
             editbleInGame = true,
-			Title = "[FAME] Scoring Rounds: incl. GameSpeed modifier",
+			Title = "[FAME] Scoring Rounds: GameSpeed Modifier",
 			Description = "If enabled, the turn for scoring will be modified by the gamespeed multiplier.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
@@ -377,8 +377,8 @@ namespace shakee.Humankind.FameByScoring
 				FameByScoring.FameScoringOption,
                 FameByScoring.NumberScoringRounds,
                 FameByScoring.FameTurnMultiplier,
-                FameByScoring.FameGainMultiplier,
                 FameByScoring.FameBaseGain,
+                FameByScoring.FameGainMultiplier,
                 FameByScoring.EraStarSettingStars,
                 FameByScoring.EraStarSettingFame,
 
