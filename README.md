@@ -2,7 +2,7 @@
 
 This project will change how you mainly gain fame in the Game "Humankind" from Amplitude Studios.
 
-There three options for gaining fame:
+There are three options for gaining fame:
 
 #### by Ratio
 You gain fame by being compared on category level. The ratio you have of the total sum of all empires is the ratio of fame you will gain. Since this compares your contribution in certain category to the sum of all empires, the fame you may gain can vary wildy between empires. The fame which is distributed per category is depending on the total number of empires in the game.
@@ -16,6 +16,7 @@ Example: MoneyStock -> like above, but instead of percentage ratio the ranking i
 Every single item (like CityCount) is being ranked and you gain a specific number of points for your place. Fame is still distributed by the total rank in the category but each single item is not able to decide a category ranking. Ranking points are close together.
 Example: MoneyStock -> since this is ranked by itself the exact value does not matter as long as it is higher then the next.
 
+
 ## Categories
 Fame is gained by being compared in different categories. Each categories sums together a number of different items (like number of territories, number of cities, etc.) which each has a different weight.
 
@@ -26,7 +27,7 @@ Fame is gained by being compared in different categories. Each categories sums t
 - Diplomacy (todo)
 
 ## Options
-There are several game options in the pacing menu to customize your game.
+There are several game options in the pacing menu to customize your game experience.
 
 #### Options for gaining Era Stars and their fame (vanilla, with modifier, only by)
 #### Options for customizing the Scoring Rounds (fame amount, round number, fame multiplier, etc.)
@@ -35,3 +36,7 @@ There are several game options in the pacing menu to customize your game.
 ## Todo
 - add UI Tooltips for last scoring round gain
 - add additional items for ranking comparison
+
+
+## Credits
+Thanks to AOM for his easy to use options framwork and Gedemon and rbeltran8000 for their BepinEx mods which helped me alot to get going.
