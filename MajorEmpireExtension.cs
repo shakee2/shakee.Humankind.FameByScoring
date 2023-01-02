@@ -18,8 +18,9 @@ namespace shakee.Humankind.FameByScoring
         public MajorEmpire empire {get; set;}
         public int empireIndex {get; set;}
         public FixedPoint [,] lastFameScoring {get; set;}
-        public FixedPoint lastFameScoreEraChange {get; set; }
-        public List<string> listRanking = new List<string> {
+        public FixedPoint lastFameScoreEraChange {get; set;}
+        public int lastFameRankEraChange {get; set;}
+        public List<string> listRanking { get; set; } = new List<string> {
                 "1st", 
                 "2nd",
                 "3rd",
@@ -49,11 +50,12 @@ namespace shakee.Humankind.FameByScoring
             FameHistoryList = serializer.SerializeElement("FameHistoryList", FameHistoryList);
             //empire = serializer.SerializeElement("empire", empire);
             empireIndex = serializer.SerializeElement("empireIndex", empireIndex);
+            lastFameRankEraChange = serializer.SerializeElement("lastFameRankEraChange", lastFameRankEraChange);
 		}
         public void CheckDispose ()
         {
             
-            if (FameHistoryList.Count > 4)
+            if (FameHistoryList.Count > 6)
             {
                 Console.WriteLine("List Scoring reached Limit {0}/4 -> cleanup. (Empire " + this.empire.Index().ToString() + ")", FameHistoryList.Count);
                 FameHistory var2 = ScoringRound.GetHistory(empire, 0);
@@ -69,8 +71,8 @@ namespace shakee.Humankind.FameByScoring
         public int empireIndex;
         public MajorEmpire empire;
         public FixedPoint fame;
-        public int turn;
-        public string[] categoryRank = new string[4] {
+        public int turn { get; set; }
+        public string[] categoryRank { get; set; } = new string[4] {
             "none",
             "none",
             "none",
@@ -83,17 +85,12 @@ namespace shakee.Humankind.FameByScoring
         public FameHistory(MajorEmpire empire)
         {
             this.empireIndex = empire.Index();
+            this.empire = empire;
             MajorEmpireExtension = MajorEmpireSaveExtension.GetExtension(empire.Index());
             MajorEmpireExtension.FameHistoryList.Add(this);
             turn = 0;
             fame = 0;
 
-        }
-        public FameHistory(ref MajorEmpireExtension MajorEmpireExtension)
-        {
-            this.MajorEmpireExtension = MajorEmpireExtension;
-            this.empireIndex = MajorEmpireExtension.empireIndex;
-            MajorEmpireExtension.FameHistoryList.Add(this);
         }
         public void Serialize(Serializer serializer)
         {
