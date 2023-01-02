@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Amplitude;
+using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Sandbox;
@@ -66,11 +67,13 @@ namespace shakee.Humankind.FameByScoring
             }
             if (calc >= numEmpires / 2 || !scoring )
             {
-                foreach (MajorEmpire item in listEmpires)                
-                {                  
-                    FameHistory var2 = CreateHistory(item);
-                    var2.turn = turn;
-                    majorSave = MajorEmpireSaveExtension.GetExtension(item.Index());
+                if (scoring)
+                {
+                    foreach (MajorEmpire item in listEmpires)                
+                    {                  
+                        FameHistory var2 = CreateHistory(item);
+                        var2.turn = turn;
+                    }
                 }
  
                 var listCat = new List<object>();
@@ -89,88 +92,71 @@ namespace shakee.Humankind.FameByScoring
                     }
                     string[,] arrtmp = (string[,])listCat[i];
                     FetchStuffRound(numEmpires, arrtmp, ref arrRank, ranking);
-                    if (scoring)
+                    if (scoring) // Round Scoring
                     {                        
                         DistributeFameRound(numEmpires, calc, ref arrRank, ref arrFame, ranking);
                         FillCategoryHistory (numEmpires, arrRank, i);
-                        // for (int j = 0; j < numEmpires; j++)
-                        // {
-                        //     empire = Sandbox.MajorEmpires[j];
-                        //     majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
-                        //     var = GetHistory(empire);
-
-                        //     FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);                        
-                        //     for (int u = 0; u < numEmpires; u++) //check rank position
-                        //     {
-                        //         runDebug("Debug Empire Rank: " + tmpArr[u,0] + " with Value: " + tmpArr[u,1] + " | args: j = " + j + "; u = " + u, 3);
-                        //         if (j == (int)tmpArr[u,0]) // j = empire index; u = rank index
-                        //         {
-                        //             var.categoryRank[i] = majorSave.listRanking[u];
-                        //             runDebug("Debug Category Ranking: " + var.categoryRank[i],3);                                        
-                        //         }                                    
-                        //     }                                
-                            
-                        // }
                     }
-                    else
+                    else // Era Change Scoring
                     {
                         DistributeFameRound(numEmpires, calc, ref arrRank, ref arrFame, ranking, empireIndex);
-                        FillCategoryHistory (numEmpires, arrRank, i);
-                        // for (int j = 0; j < numEmpires; j++)
-                        // {
-                        //     empire = Sandbox.MajorEmpires[j];
-                        //     majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
-                        //     var = GetHistory(empire);
-
-                        //     FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);                        
-                        //     for (int u = 0; u < numEmpires; u++) //check rank position
-                        //     {
-                        //         runDebug("Debug Empire Rank: " + tmpArr[u,0] + " with Value: " + tmpArr[u,1] + " | args: j = " + j + "; u = " + u, 3);
-                        //         if (j == (int)tmpArr[u,0]) // j = empire index; u = rank index
-                        //         {
-                        //             var.categoryRank[i] = majorSave.listRanking[u];
-                        //             runDebug("Debug Category Ranking: " + var.categoryRank[i],3);                                        
-                        //         }                                    
-                        //     }                                
-                            
-                        // }
-                    }                 
-
+                        //FillCategoryHistory (numEmpires, arrRank, i);
+                    }
                 }
+                if (!scoring)
+                {
+                    majorSave = MajorEmpireSaveExtension.GetExtension(empireIndex);
+                    empire = Sandbox.MajorEmpires[empireIndex];
+                    majorSave.lastFameScoreEraChange = empire.FameScore.Value;
+                    FixedPoint[,] tmpArr = arrFame.OrderByDescending(n => n[2]);  
+                    for (int j = 0; j < numEmpires; j++)
+                    {
+                        if (empireIndex == tmpArr[j,0])
+                        {
+                            majorSave.lastFameRankEraChange = j;
+                            break;
+                        }
+                    }
+                }  
                 
                 runDebug("Total Fame Gains for Turn " + turn.ToString(),1);
-
-                for (int k = 0; k < numEmpires; k++)                
+                if (scoring)
                 {
-                    empire = Sandbox.MajorEmpires[k];
-                    var = GetHistory(empire);
-                    var.fame = arrFame[k,2];
-                    runDebug("Empire: "+ k + " (" + arrFame[k,1] + " Fame) +" + arrFame[k,2],2);
-                    runDebug("Cat1: " + var.categoryRank[0] + "; Cat2: "+ var.categoryRank[1] + "; Cat3: "+ var.categoryRank[2] + "; Cat4: " + var.categoryRank[3] + "; Fame: " + var.fame.ToString(),2);
-                }
-                empire = Sandbox.MajorEmpires[0];
-                majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
-                runDebug("Last 3 Fame Values of Empire 0 - List Length: " + majorSave.FameHistoryList.Count.ToString(),2);
-                                
-                if (majorSave.FameHistoryList.Count == 0)
-                {
-                    runDebug("No Fame History yet... aborting",2);                        
-                }
-                if (majorSave.FameHistoryList.Count >= 1)
-                {
-                    var = GetHistory(empire, majorSave.FameHistoryList.Count - 1);
-                    runDebug("Latest Fame: " + var.fame.ToString() + " Turn: " + var.turn.ToString() + " | Cat1: " + var.categoryRank[0] + "; Cat2: "+ var.categoryRank[1] + "; Cat3: "+ var.categoryRank[2] + "; Cat4: " + var.categoryRank[3],2);
-                }
-                if (majorSave.FameHistoryList.Count >= 2)
-                {
-                    var = GetHistory(empire, majorSave.FameHistoryList.Count - 2);
-                    runDebug("Turn -1 Fame: " + var.fame.ToString() + " Turn: " + var.turn.ToString() + " | Cat1: " + var.categoryRank[0] + "; Cat2: "+ var.categoryRank[1] + "; Cat3: "+ var.categoryRank[2] + "; Cat4: " + var.categoryRank[3],2);
-                }
-                if (majorSave.FameHistoryList.Count >= 3)
-                {
-                    var = GetHistory(empire, majorSave.FameHistoryList.Count - 3);
-                    runDebug("Turn -2 Fame: " + var.fame.ToString() + " Turn: " + var.turn.ToString() + " | Cat1: " + var.categoryRank[0] + "; Cat2: "+ var.categoryRank[1] + "; Cat3: "+ var.categoryRank[2] + "; Cat4: " + var.categoryRank[3],2);
-                }                
+                    for (int k = 0; k < numEmpires; k++)                
+                    {
+                        empire = Sandbox.MajorEmpires[k];
+                        var = GetHistory(empire);
+                        var.fame = arrFame[k,2];
+                        
+                        runDebug("Empire: "+ k + " (" + arrFame[k,1] + " Fame) +" + arrFame[k,2],2);
+                        runDebug("Cat1: " + var.categoryRank[0] + " ; Cat2: "+ var.categoryRank[1] + " ; Cat3: "+ var.categoryRank[2] + " ; Cat4: " + var.categoryRank[3],2);
+                    }                
+                    EmpireInfo empireInfo = R.Utils_GameUtils().GetCurrentEmpireInfo();
+                    
+                    empire = Sandbox.MajorEmpires[Convert.ToInt32(empireInfo.EmpireIndex)];
+                    majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
+                    runDebug("Last 3 Fame Values of Empire 0 - List Length: " + majorSave.FameHistoryList.Count.ToString(),2);
+                                    
+                    if (majorSave.FameHistoryList.Count == 0)
+                    {
+                        runDebug("No Fame History yet... aborting",2);                        
+                    }
+                    if (majorSave.FameHistoryList.Count >= 1)
+                    {
+                        var = GetHistory(empire, majorSave.FameHistoryList.Count - 1);
+                        runDebug("Latest Fame: " + var.fame.ToString() + " Turn: " + var.turn.ToString() + " | Cat1: " + var.categoryRank[0] + "; Cat2: "+ var.categoryRank[1] + "; Cat3: "+ var.categoryRank[2] + "; Cat4: " + var.categoryRank[3],2);
+                    }
+                    if (majorSave.FameHistoryList.Count >= 2)
+                    {
+                        var = GetHistory(empire, majorSave.FameHistoryList.Count - 2);
+                        runDebug("Turn -1 Fame: " + var.fame.ToString() + " Turn: " + var.turn.ToString() + " | Cat1: " + var.categoryRank[0] + "; Cat2: "+ var.categoryRank[1] + "; Cat3: "+ var.categoryRank[2] + "; Cat4: " + var.categoryRank[3],2);
+                    }
+                    if (majorSave.FameHistoryList.Count >= 3)
+                    {
+                        var = GetHistory(empire, majorSave.FameHistoryList.Count - 3);
+                        runDebug("Turn -2 Fame: " + var.fame.ToString() + " Turn: " + var.turn.ToString() + " | Cat1: " + var.categoryRank[0] + "; Cat2: "+ var.categoryRank[1] + "; Cat3: "+ var.categoryRank[2] + "; Cat4: " + var.categoryRank[3],2);
+                    } 
+                }               
             }
             else
             {
@@ -180,24 +166,26 @@ namespace shakee.Humankind.FameByScoring
         } 
         public static void FillCategoryHistory (int numEmpires, FixedPoint[,] arrRank, int category)
         {
-            for (int j = 0; j < numEmpires; j++)
+            FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);  
+            MajorEmpire empire;
+            MajorEmpireExtension majorSave;
+            for (int j = 0; j < numEmpires; j++) // for each Empire
             {
                 FameHistory var;
-                MajorEmpire empire = Sandbox.MajorEmpires[j];
-                var majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
+                empire = Sandbox.MajorEmpires[j];
+                majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
                 var = GetHistory(empire);
-
-                FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);                        
+                                      
                 for (int u = 0; u < numEmpires; u++) //check rank position
                 {
                     runDebug("Debug Empire Rank: " + tmpArr[u,0] + " with Value: " + tmpArr[u,1] + " | args: j = " + j + "; u = " + u, 3);
                     if (j == (int)tmpArr[u,0]) // j = empire index; u = rank index
                     {
                         var.categoryRank[category] = majorSave.listRanking[u];
-                        runDebug("Debug Category Ranking: " + var.categoryRank[category],3);                                        
+                        runDebug("Debug Category Ranking: " + var.categoryRank[category],3);
+                        break;                                                            
                     }                                    
-                }                                
-                
+                }  
             }
         }
         
@@ -335,7 +323,62 @@ namespace shakee.Humankind.FameByScoring
 
 
         // Is done per Category
-        public static void DistributeFameRound (int numEmpires, int calc, ref FixedPoint[,] arrRank, ref FixedPoint[,] arrFame, int ranking, int empireIndex = -1)
+        public static void DistributeFameRound (int numEmpires, int calc, ref FixedPoint[,] arrRank, ref FixedPoint[,] arrFame, int ranking)
+        {
+            runDebug("Running Fame Distribution | Scoringtype: " + ranking.ToString(),1);
+            FixedPoint baseFame = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameBaseGain));
+            float fameMulti = float.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameGainMultiplier));
+            int turn = R.SandboxManager_Sandbox().Turn();
+            FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);            
+            FixedPoint sum = 0;
+
+            runDebug("EmpireRanking of Category:",2);
+            for (int i = 0; i < numEmpires; i++)
+            {
+                sum += arrRank[i,1];
+                runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1], 2);
+                //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
+            }
+            float steps = 0.20f;
+            
+            runDebug("Famegain for Scoring Round", 2);
+            for (int i = 0; i < numEmpires; i++)
+            {                    
+                MajorEmpire empire = Amplitude.Mercury.Sandbox.Sandbox.MajorEmpires[i];
+                FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(i);
+                string empireName = empireFaction.name;
+
+                FixedPoint fameGain;
+                FixedPoint oldFame = empire.GetPropertyValue("FameScore");
+                FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
+                FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
+                //runDebug("Assigned Values",2);
+                int numRanks = (int)Math.Ceiling((decimal)numEmpires / 2) + 1;
+                fameGain = baseFame;
+                if (ranking >= 2)
+                {
+                    for (int j = 0; j < numRanks; j++)
+                    {
+                        if ((int)tmpArr[j,0] == i)
+                        {
+                            fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
+                            runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
+                            break;
+                        }                            
+                    }
+                }
+                else
+                {
+                    fameGain = fameCalc((FixedPoint)ratioCalc(arrRank[i,1],sum),calc * baseFame);
+                }
+                fameGain *= fameMulti;                
+                fameGain *= (1 + vBonusFame);
+                empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
+                arrFame[i,2] += fameGain;
+                runDebug("ScoringRound - Empire: " + i.ToString() + " | Famegain: +" + fameGain.ToString(),2);                         
+            }
+        }
+        public static void DistributeFameRound (int numEmpires, int calc, ref FixedPoint[,] arrRank, ref FixedPoint[,] arrFame, int ranking, int empireIndex)
         {
             runDebug("Running Fame Distribution | Scoringtype: " + ranking.ToString() + " | EmpireIndex: " + empireIndex.ToString(),1);
             FixedPoint baseFame = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameBaseGain));
@@ -352,84 +395,50 @@ namespace shakee.Humankind.FameByScoring
                 //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
             }
             float steps = 0.20f;
-            if (empireIndex == -1)
-            {
-                runDebug("Famegain for Scoring Round", 2);
-                for (int i = 0; i < numEmpires; i++)
+            runDebug("Famegain for EraChange",2);
+            MajorEmpire empire = Amplitude.Mercury.Sandbox.Sandbox.MajorEmpires[empireIndex];
+            FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(empireIndex);
+            string empireName = empireFaction.name;
+            
+            FixedPoint fameGain;
+            FixedPoint oldFame = empire.GetPropertyValue("FameScore");
+            FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
+            FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
+            float catchup = 1f;
+            for (int i = 0; i < numEmpires; i++)
                 {
-                    
-                    MajorEmpire empire = Amplitude.Mercury.Sandbox.Sandbox.MajorEmpires[i];
-                    FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(i);
-                    string empireName = empireFaction.name;
-
-                    FixedPoint fameGain;
-                    FixedPoint oldFame = empire.GetPropertyValue("FameScore");
-                    FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
-                    FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
-                    //runDebug("Assigned Values",2);
-                    int numRanks = (int)Math.Ceiling((decimal)numEmpires / 2) + 1;
-                    fameGain = baseFame;
-                    if (ranking >= 2)
+                    if (vEraLevel < (FixedPoint)Sandbox.MajorEmpires[i].GetPropertyValue("EraLevel"))
                     {
-                        for (int j = 0; j < numRanks; j++)
-                        {
-                            if ((int)tmpArr[j,0] == i)
-                            {
-                                fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
-                                runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
-                            }                            
-                        }
+                        catchup += 0.1f;
                     }
-                    else
+                }
+            int numRanks = (int)Math.Ceiling((decimal)numEmpires / 2) + 1;
+            fameGain = baseFame;
+            if (ranking >= 2)
+            {
+                for (int j = 0; j < numRanks; j++)
+                {                    
+                    if ((int)tmpArr[j,0] == empireIndex)
                     {
-                        fameGain = fameCalc((FixedPoint)ratioCalc(arrRank[i,1],sum),calc * baseFame);
-                    }
-                    fameGain *= fameMulti;                
-                    fameGain *= (1 + vBonusFame);
-                    empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
-                    arrFame[i,2] += fameGain;
-                    runDebug("ScoringRound - Empire: " + i.ToString() + " | Famegain: +" + fameGain.ToString(),2); 
-                         
+                        fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
+                        runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
+                        break;
+                    }                            
                 }
             }
             else
             {
-                runDebug("Famegain for EraChange",2);
-                MajorEmpire empire = Amplitude.Mercury.Sandbox.Sandbox.MajorEmpires[empireIndex];
-                FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(empireIndex);
-                string empireName = empireFaction.name;
-                
-                FixedPoint fameGain;
-                FixedPoint oldFame = empire.GetPropertyValue("FameScore");
-                FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
-                FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
-                //runDebug("Assigned Values",2);
-                int numRanks = (int)Math.Ceiling((decimal)numEmpires / 2) + 1;
-                fameGain = baseFame;
-                if (ranking >= 2)
-                {
-                    for (int j = 0; j < numRanks; j++)
-                    {                    
-                        if ((int)tmpArr[j,0] == empireIndex)
-                        {
-                            fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
-                            runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
-                        }                            
-                    }
-                }
-                else
-                {
-                    fameGain = fameCalc((FixedPoint)ratioCalc(arrRank[empireIndex,1],sum),calc * baseFame);   
-                }
-                fameGain *= fameMulti;                
-                fameGain *= (1 + vBonusFame);
-                empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
-                arrFame[empireIndex,2] += fameGain;
-                var majorSave = MajorEmpireSaveExtension.GetExtension(empireIndex); 
-                majorSave.lastFameScoreEraChange = empire.FameScore.Value;
-
-                runDebug("EraChange - Empire: " + empireIndex.ToString() + " | Famegain: +" + fameGain.ToString() + " of " + (calc * baseFame).ToString(),2);         
+                fameGain = fameCalc((FixedPoint)ratioCalc(arrRank[empireIndex,1],sum),calc * baseFame);   
             }
+            fameGain *= fameMulti;                
+            fameGain *= (1 + vBonusFame);
+            fameGain *= catchup;
+            empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
+            arrFame[empireIndex,2] += fameGain;
+            var majorSave = MajorEmpireSaveExtension.GetExtension(empireIndex); 
+            majorSave.lastFameScoreEraChange = empire.FameScore.Value;
+
+            runDebug("EraChange - Empire: " + empireIndex.ToString() + " | Famegain: +" + fameGain.ToString() + " of " + (calc * baseFame).ToString(),2);            
         }
 
         static FixedPoint fameCalc (FixedPoint x, FixedPoint y)
