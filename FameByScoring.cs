@@ -5,6 +5,7 @@ using Amplitude;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Interop;
+using Amplitude.Mercury.Sandbox;
 using HumankindModTool;
 using Amplitude.Framework.Options;
 using Amplitude.Mercury.Data.GameOptions;
@@ -342,7 +343,7 @@ namespace shakee.Humankind.FameByScoring
             if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "0"))
             {
                 ScoringRound.RoundScoring(false, empireIndex: empireIndex);            
-            }
+            }            
         }
     }
 

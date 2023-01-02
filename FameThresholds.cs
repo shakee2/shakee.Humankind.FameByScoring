@@ -16,6 +16,9 @@ namespace shakee.Humankind.FameByScoring
             float baseFameMulti = Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.FameGainMultiplier));
             int gameOptionTurns = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
             float gameSpeed;
+            MajorEmpire empire;
+            MajorEmpireExtension majorSave;
+
             if (GameOptionHelper.CheckGameOption(FameByScoring.FameTurnMultiplier,"true"))
             {
                 gameSpeed = Amplitude.Mercury.Interop.AI.Snapshots.Game.GameSpeedMultiplier;
@@ -27,8 +30,8 @@ namespace shakee.Humankind.FameByScoring
 
             for (int i = 0; i < numEmpires; i++)
             {
-                MajorEmpire empire = Sandbox.MajorEmpires[i];
-                var majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
+                empire = Sandbox.MajorEmpires[i];
+                majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
                 Console.WriteLine("Last Saved Fame for Empire: " + empire.Index() + " with Fame: " + majorSave.lastFameScoreEraChange);
 
                 FixedPoint tmpFame = baseFame * baseFameMulti * 4;  // 20 * 1 * 4 = 80
@@ -41,10 +44,6 @@ namespace shakee.Humankind.FameByScoring
                 {
                     empire.EraStarsCount.Value += currentScore - currentStars;
                     empire.SumOfEraStars.Value += currentScore - currentStars;
-                    if (currentStars >= 7)
-                    {
-                        majorSave.lastFameScoreEraChange = empire.FameScore.Value;
-                    }
                 }
                 
                 Console.WriteLine("Empire {4} | Turns: {0} | Next Threshold: {1} | Current Stars {2} | Goal Stars: {3}", checkturn.ToString(), (majorSave.lastFameScoreEraChange + fameTreshold * (currentScore + 1)).ToString(),currentStars.ToString(), currentScore.ToString(), i.ToString());
