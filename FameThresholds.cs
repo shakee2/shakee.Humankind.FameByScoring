@@ -2,6 +2,7 @@ using System;
 using Amplitude;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.Sandbox;
+using Amplitude.Mercury.Interop;
 using HumankindModTool;
 
 namespace shakee.Humankind.FameByScoring
@@ -33,13 +34,14 @@ namespace shakee.Humankind.FameByScoring
                 empire = Sandbox.MajorEmpires[i];
                 majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
                 Console.WriteLine("Last Saved Fame for Empire: " + empire.Index() + " with Fame: " + majorSave.lastFameScoreEraChange);
+                EmpireInfo empireInfo = R.Utils_GameUtils().GetCurrentEmpireInfo();
+                FixedPoint ersStarsReq =  empireInfo.EraStarsRequirement;
 
-                FixedPoint tmpFame = baseFame * baseFameMulti * 4;  // 20 * 1 * 4 = 80
-                FixedPoint checkturn = (FixedPoint.Floor((FixedPoint)50 / gameOptionTurns)); // 50 / 4 = 12
-                FixedPoint fameTreshold = FixedPoint.Floor(tmpFame * checkturn * gameSpeed); // 80 * 12 * 0,5 = 480                         
+                FixedPoint tmpFame = baseFame * baseFameMulti * 4 * 1.2f;  // 20 * 1 * 4 = 96; 4 = number of categories
+                FixedPoint checkturn = (FixedPoint.Floor((FixedPoint)50 * gameSpeed / (gameOptionTurns * gameSpeed))); // 50 * 0,5 / 8 * 0,5 = 6
+                FixedPoint fameTreshold = FixedPoint.Floor(tmpFame * checkturn / ersStarsReq); // 96 * 6 / 7 = 
                 FixedPoint currentScore = FixedPoint.Floor((empire.FameScore.Value - majorSave.lastFameScoreEraChange) / fameTreshold);
                 FixedPoint currentStars = empire.EraStarsCount.Value;
-
                 if (currentScore > currentStars)
                 {
                     empire.EraStarsCount.Value += currentScore - currentStars;
