@@ -409,6 +409,10 @@
       <HintPath>..\..\References\UnityEngine.XRModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Modding.Humankind.DevTools">
+      <HintPath>C:\Users\szudr\Documents\Humankind Mod Tool\Projects\Modding.Humankind.DevTools.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

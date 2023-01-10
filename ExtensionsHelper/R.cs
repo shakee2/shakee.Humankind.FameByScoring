@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 using Amplitude;
 using Amplitude.Framework.Simulation;
 using Amplitude.Mercury.Interop;
@@ -9,6 +10,8 @@ using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.UI;
 using Amplitude.Mercury.Data;
 using Amplitude.Mercury.UI.Helpers;
+using Amplitude.UI.Interactables;
+using static Amplitude.UI.UIHierarchyManager;
 
 namespace shakee.Humankind.FameByScoring
 {
@@ -150,6 +153,11 @@ namespace shakee.Humankind.FameByScoring
 		{
 			return (int)R.MajorEmpire_Index_FieldInfo.GetValue(self);
 		}
+		public static ReferenceCollection<Settlement> Settlements(this MajorEmpire self)
+		{
+			return (ReferenceCollection<Settlement>)R.MajorEmpire_Settlements_FieldInfo.GetValue(self);
+		}
+
 
 		// Token: 0x06000116 RID: 278 RVA: 0x00006028 File Offset: 0x00004228
 		public static Sandbox SandboxManager_Sandbox()
@@ -457,6 +465,7 @@ namespace shakee.Humankind.FameByScoring
 		private static FieldInfo Empire_Index_FieldInfo = typeof(Empire).GetField("Index", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		private static FieldInfo MajorEmpire_Index_FieldInfo = typeof(MajorEmpire).GetField("Index", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo MajorEmpire_Settlements_FieldInfo = typeof(MajorEmpire).GetField("Settlements", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		// Token: 0x0400007A RID: 122
 		private static FieldInfo SandboxManager_Sandbox_FieldInfo = typeof(SandboxManager).GetField("Sandbox", BindingFlags.Static | BindingFlags.NonPublic);
@@ -576,5 +585,31 @@ namespace shakee.Humankind.FameByScoring
 			typeof(string),
 			typeof(int)
 		}, null); */
+
+#region District
+		private static FieldInfo Settlements_Districts_FieldInfo = typeof(Settlement).GetField("Districts", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		public static ReferenceCollection<District> Districts(this Settlement self)
+		{
+			return (ReferenceCollection<District>)R.Settlements_Districts_FieldInfo.GetValue(self);
+		}
+
+#endregion
+# region GUI
+		//[RequireComponent(typeof(Amplitude.UI.UIHierarchyManager))]
+		private static FieldInfo UITooltipManager_HoveredTooltip = typeof(UITooltipManager).GetField("currentlyHoveredTooltip", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		public static UITooltip currentlyHoveredTooltip(this UITooltipManager self)
+		{
+			return (UITooltip)R.UITooltipManager_HoveredTooltip.GetValue(self);
+		}
+
+
+#endregion
+
+
+
+
+
 	}
 }
