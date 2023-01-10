@@ -197,6 +197,16 @@ namespace shakee.Humankind.FameByScoring
                     Description = "40 Fame.",
                     Value = "40"
                 },
+                new GameOptionStateInfo{
+                    Title = "50",
+                    Description = "50 Fame.",
+                    Value = "50"
+                },
+                new GameOptionStateInfo{
+                    Title = "100",
+                    Description = "100 Fame.",
+                    Value = "100"
+                },
             }
         };
         public static GameOptionInfo EraStarSettingFame = new GameOptionInfo
@@ -256,7 +266,7 @@ namespace shakee.Humankind.FameByScoring
 			DefaultValue = "True",
             editbleInGame = true,
 			Title = "[FAME] Era Stars: Star Gain Method",
-			Description = "Setting for changing how era stars are gained. Default or a new method depending on your current fame score. When changing era, the new thresholds are always current famescore + threashold.",
+			Description = "Setting for changing how era stars are gained. Default or a new method -> Fame Thresholds. They dependg on your current fame score and each star needs a certain amount of fame. When changing era, the new thresholds are always current famescore + threashold.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
