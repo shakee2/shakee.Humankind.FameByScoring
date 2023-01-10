@@ -39,7 +39,7 @@ namespace shakee.Humankind.FameByScoring
             lastFameScoreEraChange = 0;
             empireIndex = empire.Index();
             this.empire = empire;
-            lastFameScoring = new FixedPoint[5,3];        
+            lastFameScoring = new FixedPoint[5,3];                 
         }
 
         public void Serialize(Serializer serializer)        
@@ -57,7 +57,7 @@ namespace shakee.Humankind.FameByScoring
             
             if (FameHistoryList.Count > 6)
             {
-                Console.WriteLine("List Scoring reached Limit {0}/4 -> cleanup. (Empire " + this.empire.Index().ToString() + ")", FameHistoryList.Count);
+                Console.WriteLine("List Scoring reached Limit {0}/6 -> cleanup. (Empire " + this.empire.Index().ToString() + ")", FameHistoryList.Count);
                 FameHistory var2 = ScoringRound.GetHistory(empire, 0);
                 var2.Dispose();
                 FameHistoryList.Remove(FameHistoryList[0]);
@@ -72,11 +72,13 @@ namespace shakee.Humankind.FameByScoring
         public MajorEmpire empire;
         public FixedPoint fame;
         public int turn { get; set; }
-        public string[] categoryRank { get; set; } = new string[4] {
-            "none",
-            "none",
-            "none",
-            "none",            
+        public int totalRank  { get; set; }
+        public int[] categoryRank { get; set; } = new int[5] {
+            0,
+            0,
+            0,
+            0,
+            0,            
             };
         public FameHistory()
         {
@@ -97,6 +99,7 @@ namespace shakee.Humankind.FameByScoring
             fame = serializer.SerializeElement("fame", fame);
             turn = serializer.SerializeElement("turn", turn);
             categoryRank = serializer.SerializeElement("categoryRank", categoryRank);
+            totalRank = serializer.SerializeElement("totalRank", totalRank);
             //empire = serializer.SerializeElement("empire", empire);
 		}
         ~FameHistory()
@@ -143,7 +146,6 @@ namespace shakee.Humankind.FameByScoring
 		[HarmonyPatch(nameof(InitializeOnStart))]
 		public static void InitializeOnStart(MajorEmpire __instance)
 		{
-            Console.WriteLine("Initialize MajorEmpire ave Extension");
             MajorEmpireExtension majorEmpireExtension = new MajorEmpireExtension(__instance);
             MajorEmpireSaveExtension.EmpireExtensionPerEmpireIndex.Add(__instance.Index(), majorEmpireExtension);			
 
