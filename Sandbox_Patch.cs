@@ -38,6 +38,7 @@ namespace shakee.Humankind.FameByScoring
 		{
 			Diagnostics.LogWarning($"[FameByScoring] entering Sandbox, ThreadStart");
 			MajorEmpireSaveExtension.OnSandboxStart();
+			FameHistory_GUI.SetupComponent();
             return true;
         }
     }
