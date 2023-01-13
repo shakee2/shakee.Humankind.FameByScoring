@@ -17,9 +17,9 @@ namespace shakee.Humankind.FameByScoring
         public List<FameHistory> FameHistoryList = new List<FameHistory>();
         public MajorEmpire empire {get; set;}
         public int empireIndex {get; set;}
-        public FixedPoint [,] lastFameScoring {get; set;}
-        public FixedPoint lastFameScoreEraChange {get; set;}
+        public FixedPoint lastFameScoreEraChange {get; set;} // for setting up next Threshold after Era Change
         public int lastFameRankEraChange {get; set;}
+        public FixedPoint lastFameGainEraChange {get; set;}
         public List<string> listRanking { get; set; } = new List<string> {
                 "1st", 
                 "2nd",
@@ -38,8 +38,7 @@ namespace shakee.Humankind.FameByScoring
 		{
             lastFameScoreEraChange = 0;
             empireIndex = empire.Index();
-            this.empire = empire;
-            lastFameScoring = new FixedPoint[5,3];                 
+            this.empire = empire;           
         }
 
         public void Serialize(Serializer serializer)        
@@ -51,6 +50,7 @@ namespace shakee.Humankind.FameByScoring
             //empire = serializer.SerializeElement("empire", empire);
             empireIndex = serializer.SerializeElement("empireIndex", empireIndex);
             lastFameRankEraChange = serializer.SerializeElement("lastFameRankEraChange", lastFameRankEraChange);
+            lastFameGainEraChange = serializer.SerializeElement("lastFameGainEraChange", lastFameGainEraChange);
 		}
         public void CheckDispose ()
         {

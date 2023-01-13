@@ -593,6 +593,12 @@ namespace shakee.Humankind.FameByScoring
 		{
 			return (ReferenceCollection<District>)R.Settlements_Districts_FieldInfo.GetValue(self);
 		}
+		private static FieldInfo StatisticsController_EmpireStatistics = typeof(GameStatisticsController).GetField("EmpireStatistics", BindingFlags.Instance | BindingFlags.NonPublic);
+		
+		public static EmpireStatistics[] EmpireStatistics (this GameStatisticsController self)
+		{
+			return (EmpireStatistics[])R.StatisticsController_EmpireStatistics.GetValue(self);
+		}
 
 #endregion
 # region GUI
@@ -606,7 +612,26 @@ namespace shakee.Humankind.FameByScoring
 
 
 #endregion
+#region battle
+		private static FieldInfo Battle_List_EmpiresOrdered = typeof(Battle).GetField("EmpiresOrdered", BindingFlags.Instance | BindingFlags.NonPublic);
 
+		public static List<Empire> EmpiresOrdered(this Battle self)
+		{
+			return (List<Empire>)R.Battle_List_EmpiresOrdered.GetValue(self);
+		}
+/* 		private static MethodInfo Battle_IBattleStateMachine_CheckTransition = typeof(IBattleStateMachine).GetMethod("CheckTransition", BindingFlags.Instance | BindingFlags.Public, null, new Type[]
+		{
+			typeof(StaticString)
+		}, null);
+		public static bool CheckTransition(this BaseSimulationEntity self, StaticString descriptorName)
+		{
+			return (bool)R.Battle_IBattleStateMachine_CheckTransition.Invoke(self, new object[]
+			{
+				descriptorName
+			});
+		} */
+
+#endregion
 
 
 

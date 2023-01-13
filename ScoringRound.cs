@@ -30,12 +30,14 @@ namespace shakee.Humankind.FameByScoring
         {"InfluenceNet","0.06","Cultural"},
         //{"InfluenceStock","0.02","Cultural"},
         {"SumOfLuxuryResourceAccessCount","2","Merchant"},
+        
         };
         static string[,] arrMilitary = new string[,]{
         {"SumOfUnits","0.2","Warmonger"},
         {"CapturedCityCount","3","Expansionist"},
         {"SumOfStrategicResourceAccessCount","1","Warmonger"},
         {"TerritoryCount","1","Expansionist"},
+        // {"KilledUnitsByMe","0.1","Warmonger"},
         };
         static string[,] arrCity = new string[,]{
         {"DistrictCount","0.25","Builder"},
@@ -43,6 +45,8 @@ namespace shakee.Humankind.FameByScoring
         {"SumOfPopulation","0.10","Farmer"},
         {"HolySite", "3", "Builder"},
         {"CulturalWonder", "5", "Builder"},
+        {"LandTradeRoadsCount", "1", "Merchant"},
+        {"NavalTradeRoadsCount", "0.5", "Merchant"},
         };
 
 
@@ -81,6 +85,11 @@ namespace shakee.Humankind.FameByScoring
                         var2.turn = turn;
                     }
                 }
+                else if (!scoring)
+                {
+                    majorSave = MajorEmpireSaveExtension.GetExtension(empireIndex);
+                    majorSave.lastFameRankEraChange = 0;
+                }
  
                 var listCat = new List<object>();
                 listCat.Add((object)arrState);
@@ -91,7 +100,7 @@ namespace shakee.Humankind.FameByScoring
 
                 for (int i = 0; i < listCat.Count; i++)
                 {
-                    FixedPoint[,] arrRank = new FixedPoint[numEmpires,2]; //neues Array pro Category
+                    FixedPoint[,] arrRank = new FixedPoint[numEmpires,3]; //neues Array pro Category
                     for (int j = 0; j < numEmpires; j++)
                     {
                         arrRank[j,0] = j; //Initialize arrRank mit Empire Index
@@ -119,7 +128,8 @@ namespace shakee.Humankind.FameByScoring
                     {
                         if (empireIndex == tmpArr[j,0])
                         {
-                            majorSave.lastFameRankEraChange = j;
+                            majorSave.lastFameRankEraChange /= listCat.Count;
+                            majorSave.lastFameGainEraChange = tmpArr[j,2];
                             break;
                         }
                     }
@@ -229,29 +239,30 @@ namespace shakee.Humankind.FameByScoring
             {
                 runDebug("Empire " + tmpArr[i,0].ToString() + " with Value " + tmpArr[i,1].ToString(),3);
             }
-
-            for (int i = 0; i < arrRank.GetLength(0); i++)
+            int numRanks = (int)Math.Ceiling((float)arrRank.GetLength(0) / 2) + 1;
+            for (int i = 0; i < arrRank.GetLength(0); i++) // empire loop
             {
-                for (int j = 0; j < tmpArr.GetLength(0); j++)
+                for (int j = 0; j < tmpArr.GetLength(0); j++) // rank loop
                 {
                     if (arrRank[i,0] == tmpArr[j,0]) 
                     {
-                        if (j == 0)
-                        {
-                            arrRank[i,1] += 7;
-                        }
-                        else if (j == 1)
-                        {
-                            arrRank[i,1] += 5;
-                        }
-                        else if (j == 2)
-                        {
-                            arrRank[i,1] += 3;
-                        }
-                        else
-                        {
-                            arrRank[i,1] += 1;
-                        }
+                        arrRank[i,1] += (1 + (Math.Max((numRanks - j),0) * 2));
+                        // if (j == 0)
+                        // {
+                        //     arrRank[i,1] += 7;
+                        // }
+                        // else if (j == 1)
+                        // {
+                        //     arrRank[i,1] += 5;
+                        // }
+                        // else if (j == 2)
+                        // {
+                        //     arrRank[i,1] += 3;
+                        // }
+                        // else
+                        // {
+                        //     arrRank[i,1] += 1;
+                        // }
                     }
                 }            
             }
@@ -304,7 +315,7 @@ namespace shakee.Humankind.FameByScoring
                     int x1;
                     int x2;
                     //int x3;
-                    empSettlements = empire.Settlements();
+                    empSettlements = empire.Settlements();                    
                     switch (arrProperty[u,0])
                     {
                         case "DistrictCount":                            
@@ -313,6 +324,28 @@ namespace shakee.Humankind.FameByScoring
                                 x += (float)(empSettlements[x1].ExtensionDistrictsCount.Value);
                             }     
                             break;
+                        case "LandTradeRoadsCount":                            
+                            for (x1 = 0; x1 < empSettlements.Count; x1++)
+                            {
+                                x += (float)(empSettlements[x1].LandTradeRoadsCount.Value);
+                            }     
+                            break;
+                        case "NavalTradeRoadsCount":                            
+                            for (x1 = 0; x1 < empSettlements.Count; x1++)
+                            {
+                                x += (float)(empSettlements[x1].NavalTradeRoadsCount.Value);
+                            }     
+                            break;
+                        /* case "KilledUnitsByMe":
+                            ref EmpireStatistics test = ref Snapshots.GameStatisticsSnapshot.PresentationData.EmpireStatistics[i];
+                            
+                            x += (float)test.AggregationData.NumberOfOtherUnitsKilledByMe;
+                            Console.WriteLine("Output ("+i+") Killed Units: " + test.AggregationData.NumberOfOtherUnitsKilledByMe.ToString());
+                            Console.WriteLine("Output ("+i+") Fought Battles " + test.NumberOfBattleFought.ToString());
+                            Console.WriteLine("Output ("+i+") Won Battles: " + test.ComputeNumberOfWonBattles().ToString());
+                            
+                            break; */
+                            // NumberOfOtherUnitsKilledByMe
                         case "HolySite":
                             for (x1 = 0; x1 < empSettlements.Count; x1++)
                             {
@@ -491,10 +524,15 @@ namespace shakee.Humankind.FameByScoring
             fameGain *= (1 + vBonusFame + catchup);
             empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
             arrFame[empireIndex,2] += fameGain;
-            var majorSave = MajorEmpireSaveExtension.GetExtension(empireIndex); 
-            majorSave.lastFameScoreEraChange = empire.FameScore.Value;
-
-            runDebug("EraChange - Empire: " + empireIndex.ToString() + " | Famegain: +" + fameGain.ToString(),2);            
+            for (int i = 0; i < numEmpires; i++)
+            {
+                if(empireIndex == tmpArr[i,0])
+                {
+                    MajorEmpireExtension majorSave = MajorEmpireSaveExtension.GetExtension(empireIndex);
+                    majorSave.lastFameRankEraChange += i;
+                }
+            }
+            runDebug("EraChange - Empire: " + empireIndex.ToString() + " | Famegain: +" + fameGain.ToString(),2);    
         }
 
         static FixedPoint fameCalc (FixedPoint x, FixedPoint y)

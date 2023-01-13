@@ -294,6 +294,7 @@ namespace shakee.Humankind.FameByScoring
         public static void Raise (SimulationEvent_NewTurnBegin __instance, object sender, ushort turn) {
             if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "0"))
             {        
+                EmpireBanner_FamePennant_Patch.SetupComponent();
                 float gameSpeed;
                 int gameOptionTurns = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
                 if (GameOptionHelper.CheckGameOption(FameByScoring.FameTurnMultiplier,"true"))
