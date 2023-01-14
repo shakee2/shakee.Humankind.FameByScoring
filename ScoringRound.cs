@@ -6,16 +6,14 @@ using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Sandbox;
-using Modding.Humankind.DevTools;
 using HumankindModTool;
-using UnityEngine;
 
 namespace shakee.Humankind.FameByScoring
 {
     public class ScoringRound
     {
         
-        public static int debuglevel = 2; // 0 = none, 1 = low, 2 = some details, 3 = all details
+        public static int debuglevel = 0; // 0 = none, 1 = low, 2 = some details, 3 = all details
                 
         static string[,] arrState = new string[,]{
         {"CityCount","3","Expansionist"},
@@ -25,9 +23,9 @@ namespace shakee.Humankind.FameByScoring
         {"NumberOfCulturallyControlledTerritory","1","Cultural"},
         };
         static string[,] arrEconomy = new string[,]{
-        {"MoneyNet","0.06","Merchant"},
+        {"MoneyNet","0.01","Merchant"},
         //{"MoneyStock","0.02","Merchant"},
-        {"InfluenceNet","0.06","Cultural"},
+        {"InfluenceNet","0.01","Cultural"},
         //{"InfluenceStock","0.02","Cultural"},
         {"SumOfLuxuryResourceAccessCount","2","Merchant"},
         
