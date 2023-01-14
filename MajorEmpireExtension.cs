@@ -146,9 +146,12 @@ namespace shakee.Humankind.FameByScoring
 		[HarmonyPatch(nameof(InitializeOnStart))]
 		public static void InitializeOnStart(MajorEmpire __instance)
 		{
-            MajorEmpireExtension majorEmpireExtension = new MajorEmpireExtension(__instance);
-            MajorEmpireSaveExtension.EmpireExtensionPerEmpireIndex.Add(__instance.Index(), majorEmpireExtension);			
-
+            if (Sandbox_Patch.ModDefaultingOff == false)
+            {       
+                                     
+                MajorEmpireExtension majorEmpireExtension = new MajorEmpireExtension(__instance);
+                MajorEmpireSaveExtension.EmpireExtensionPerEmpireIndex.Add(__instance.Index(), majorEmpireExtension);			
+            }
 		}
 		//*/
 
@@ -156,7 +159,10 @@ namespace shakee.Humankind.FameByScoring
 		[HarmonyPostfix]
 		public static void Serialize(MajorEmpire __instance, Serializer serializer)
 		{
-
+            if (Sandbox_Patch.ModDefaultingOff == true)
+            {
+                return;
+            }
 			int empireIndex = __instance.Index();
 			switch (serializer.SerializationMode)
 			{
