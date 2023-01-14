@@ -245,22 +245,6 @@ namespace shakee.Humankind.FameByScoring
                     if (arrRank[i,0] == tmpArr[j,0]) 
                     {
                         arrRank[i,1] += (1 + (Math.Max((numRanks - j),0) * 2));
-                        // if (j == 0)
-                        // {
-                        //     arrRank[i,1] += 7;
-                        // }
-                        // else if (j == 1)
-                        // {
-                        //     arrRank[i,1] += 5;
-                        // }
-                        // else if (j == 2)
-                        // {
-                        //     arrRank[i,1] += 3;
-                        // }
-                        // else
-                        // {
-                        //     arrRank[i,1] += 1;
-                        // }
                     }
                 }            
             }

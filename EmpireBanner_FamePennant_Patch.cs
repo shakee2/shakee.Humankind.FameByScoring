@@ -37,8 +37,6 @@ namespace shakee.Humankind.FameByScoring
         public static void OnBeginShow(EmpireBanner_FamePennant __instance, bool instant)
         {
             Console.WriteLine("Show Fame Pennant");
-            //Change
-            
         }    
 
         public static void SetupComponent()

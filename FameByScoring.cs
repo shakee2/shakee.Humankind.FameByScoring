@@ -16,7 +16,7 @@ using Amplitude.Framework;
 namespace shakee.Humankind.FameByScoring  
 {
 
-    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.00.1")]
+    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.1")]
     public class FameByScoring : BaseUnityPlugin
     {
         const string PLUGIN_GUID = "shakee.Humankind.FameByScoring";
@@ -39,7 +39,7 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_FameScoring",
 			DefaultValue = "0",
-            editbleInGame = true,
+            editbleInGame = false,
 			Title = "[FAME] Scoring Rounds: Fame Distribution",
 			Description = "Sets how fame is generated and distributed. If activated, you gain fame every few turns and when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",

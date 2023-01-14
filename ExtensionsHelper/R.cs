@@ -160,16 +160,6 @@ namespace shakee.Humankind.FameByScoring
 
 
 		// Token: 0x06000116 RID: 278 RVA: 0x00006028 File Offset: 0x00004228
-		public static Sandbox SandboxManager_Sandbox()
-		{
-			return (Sandbox)R.SandboxManager_Sandbox_FieldInfo.GetValue(null);
-		}
-
-		// Token: 0x06000117 RID: 279 RVA: 0x0000604C File Offset: 0x0000424C
-		public static int Turn(this Sandbox self)
-		{
-			return (int)R.Sandbox_Turn_PropertyInfo.GetValue(self);
-		}
 
 		// Token: 0x06000118 RID: 280 RVA: 0x0000606E File Offset: 0x0000426E
 		public static void AddWinner(this CompetitiveDeedInfo self, int empireIndex, int turn)
@@ -468,10 +458,7 @@ namespace shakee.Humankind.FameByScoring
 		private static FieldInfo MajorEmpire_Settlements_FieldInfo = typeof(MajorEmpire).GetField("Settlements", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		// Token: 0x0400007A RID: 122
-		private static FieldInfo SandboxManager_Sandbox_FieldInfo = typeof(SandboxManager).GetField("Sandbox", BindingFlags.Static | BindingFlags.NonPublic);
-
-		// Token: 0x0400007B RID: 123
-		private static PropertyInfo Sandbox_Turn_PropertyInfo = typeof(Sandbox).GetProperty("Turn", BindingFlags.Instance | BindingFlags.NonPublic);
+		
 
 		// Token: 0x0400007C RID: 124
 		private static MethodInfo CompetitiveDeedInfo_AddWinner_MethodInfo_Int32_Int32 = typeof(CompetitiveDeedInfo).GetMethod("AddWinner", BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[]
@@ -631,6 +618,38 @@ namespace shakee.Humankind.FameByScoring
 			});
 		} */
 
+#endregion
+#region Sandbox
+
+		private static FieldInfo SandboxManager_Sandbox_FieldInfo = typeof(SandboxManager).GetField("Sandbox", BindingFlags.Static | BindingFlags.NonPublic);
+
+		private static PropertyInfo Sandbox_Turn_PropertyInfo = typeof(Sandbox).GetProperty("Turn", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static PropertyInfo Sandbox_SandboxThreadStartSettings_PropertyInfo = typeof(Sandbox).GetProperty("SandboxThreadStartSettings", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static PropertyInfo SandboxThreadStartSettings_Parameter_PropertyInfo = typeof(SandboxThreadStartSettings).GetProperty("Parameter", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		public static Sandbox SandboxManager_Sandbox()
+		{
+			return (Sandbox)R.SandboxManager_Sandbox_FieldInfo.GetValue(null);
+		}
+		public static int Turn(this Sandbox self)
+		{
+			return (int)R.Sandbox_Turn_PropertyInfo.GetValue(self);
+		}
+		public static SandboxThreadStartSettings SandboxThreadStartSettings(Sandbox self)
+		{
+			return (SandboxThreadStartSettings)R.Sandbox_SandboxThreadStartSettings_PropertyInfo.GetValue(self);
+		}
+		public static void SandboxThreadStartSettings(Sandbox self, object parameter)
+		{
+			R.Sandbox_SandboxThreadStartSettings_PropertyInfo.SetValue(self, parameter);
+		}
+		public static object Parameter(this SandboxThreadStartSettings self)
+		{
+			return (object)R.SandboxThreadStartSettings_Parameter_PropertyInfo.GetValue(self);
+		}
+
+
+		
 #endregion
 
 
