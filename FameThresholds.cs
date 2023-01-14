@@ -33,7 +33,7 @@ namespace shakee.Humankind.FameByScoring
             {
                 empire = Sandbox.MajorEmpires[i];
                 majorSave = MajorEmpireSaveExtension.GetExtension(empire.Index());
-                Console.WriteLine("Last Saved Fame for Empire: " + empire.Index() + " with Fame: " + majorSave.lastFameScoreEraChange);
+                //Console.WriteLine("Last Saved Fame for Empire: " + empire.Index() + " with Fame: " + majorSave.lastFameScoreEraChange);
                 EmpireInfo empireInfo = R.Utils_GameUtils().GetCurrentEmpireInfo();
                 FixedPoint eraStarsReq =  empireInfo.EraStarsRequirement;
 
@@ -49,7 +49,7 @@ namespace shakee.Humankind.FameByScoring
                     empire.SumOfEraStars.Value += currentScore - currentStars;
                 }
                 
-                Console.WriteLine("Empire {4} | Turns: {0} | Next Threshold: {1} | Current Stars {2} | Goal Stars: {3}", checkturn.ToString(), (majorSave.lastFameScoreEraChange + fameTreshold * (currentScore + 1)).ToString(),currentStars.ToString(), currentScore.ToString(), i.ToString());
+                //Console.WriteLine("Empire {4} | Turns: {0} | Next Threshold: {1} | Current Stars {2} | Goal Stars: {3}", checkturn.ToString(), (majorSave.lastFameScoreEraChange + fameTreshold * (currentScore + 1)).ToString(),currentStars.ToString(), currentScore.ToString(), i.ToString());
                 R.DepartmentOfDevelopment(empire).RefreshNextFactionInfos();
                 
             }

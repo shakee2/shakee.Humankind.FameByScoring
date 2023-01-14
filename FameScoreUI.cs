@@ -1,29 +1,8 @@
 using System;
-using BepInEx;
-using HarmonyLib;
-using Amplitude;
-using Amplitude.Framework;
-using Amplitude.Framework.Networking;
-using Amplitude.Framework.Overlay;
-using Amplitude.Mercury.Interop;
-using Amplitude.Mercury.Runtime;
-using Amplitude.Mercury.Sandbox;
 using UnityEngine;
-using System.Collections;
-using Amplitude.Framework.Simulation;
 using Amplitude.Mercury.Simulation;
-using Amplitude.Mercury.Data.Simulation;
-using Modding.Humankind.DevTools;
 using HumankindModTool;
-using Amplitude.Mercury.UI;
-using Amplitude.Mercury.UI.Helpers;
-using Amplitude.Mercury.UI.Tooltips;
-using Amplitude.Mercury.UI.Windows;
-using Amplitude.UI;
 using Amplitude.UI.Interactables;
-using Amplitude.UI.Tooltips;
-using Amplitude.UI.Windows;
-using Amplitude.Mercury;
 
 namespace shakee.Humankind.FameByScoring
 {
@@ -68,7 +47,7 @@ namespace shakee.Humankind.FameByScoring
 
                 if (empire.EraLevel.Value > 0 && empireSave.FameHistoryList.Count > 0)
                 {
-                    GUILayout.BeginArea(new Rect(0.15f * Screen.width , Screen.height * 0.15f, 340f, 350f));                    
+                    GUILayout.BeginArea(new Rect(0.20f * Screen.width , Screen.height * 0.20f, 340f, 350f));                    
                         GUILayout.Space(TreeRowPadding.top);                        
                         GUILayout.BeginVertical(BackgroundStyle.Get(Color.grey));
                             GUILayout.Label("Scoring Rounds History",BackgroundStyle.Headline(BackgroundStyle.DarkishTextColor));
@@ -95,7 +74,7 @@ namespace shakee.Humankind.FameByScoring
                                         FameHistory fame = ScoringRound.GetHistory(empire,empireSave.FameHistoryList.Count - 1 - i);
                                         GUILayout.Label(fame.turn.ToString(),BackgroundStyle.NormalCenter(fontSizeNormal));
                                         GUILayout.Label(fame.fame.ToString(),BackgroundStyle.NormalCenter(fontSizeNormal));
-                                        GUILayout.Label(empireSave.listRanking[fame.totalRank],BackgroundStyle.NormalCenter(fontSizeNormal));
+                                        GUILayout.Label(empireSave.listRanking[fame.totalRank],BackgroundStyle.RankColor(empireSave.listRanking[fame.totalRank]));
                                         for (int k = 0; k < 4; k++)
                                         {
                                             GUILayout.Label(empireSave.listRanking[fame.categoryRank[k]],BackgroundStyle.RankColor(empireSave.listRanking[(fame.categoryRank[k])]));
@@ -120,27 +99,7 @@ namespace shakee.Humankind.FameByScoring
                         GUILayout.FlexibleSpace();
                     GUILayout.EndArea();
                 }   
-            }
-
-            
-        }   
-            
-        IEnumerator DoCheck()
-        {            
-            MajorEmpireExtension empireSave = MajorEmpireSaveExtension.GetExtension(Convert.ToInt32(R.Utils_GameUtils().GetCurrentEmpireInfo().EmpireIndex));
-            MajorEmpire empire = empireSave.empire;
-
-            Console.WriteLine("Famescore test 2");
-            GUILayout.BeginArea(new Rect(0.2f * Screen.width , Screen.height * 0.25f, 100f, 100f));
-            GUILayout.BeginVertical();
-            GUILayout.Label("Fame History");
-            
-            GUILayout.EndVertical();
-            GUILayout.EndArea();
-
-
-            yield return new WaitForSeconds(1.15f);            
-        }
-
+            }            
+        }  
     }
 }
