@@ -12,7 +12,9 @@ namespace shakee.Humankind.FameByScoring
 {
     public class ScoringRound
     {
-        
+        public static float rankSteps = 0.10f;
+        public static float catchupStep = 0.1f;
+        public static float eraLevelStep = 0.05f;
         public static int debuglevel = 0; // 0 = none, 1 = low, 2 = some details, 3 = all details
                 
         static string[,] arrState = new string[,]{
@@ -38,7 +40,6 @@ namespace shakee.Humankind.FameByScoring
         {"BattlesWon","0.7","Warmonger"},
         {"KilledUnits","0.05","Warmonger"},        
         // {"TerritoryCount","1","Expansionist"},
-        // {"KilledUnitsByMe","0.1","Warmonger"},
         };
         static string[,] arrCity = new string[,]{
         {"DistrictCount","0.25","Builder"},
@@ -272,7 +273,7 @@ namespace shakee.Humankind.FameByScoring
                     arr[i,0] = (FixedPoint)i;        
                 }
 
-                float multi = float.Parse(arrProperty[u,1]);
+                float weight = float.Parse(arrProperty[u,1]);
                 string affinity = arrProperty[u,2];
 
 
@@ -298,7 +299,7 @@ namespace shakee.Humankind.FameByScoring
                     {
                         if (vEraLevel < (FixedPoint)Sandbox.MajorEmpires[maj].GetPropertyValue("EraLevel"))
                         {
-                            catchup += 0.1f;
+                            catchup += catchupStep;
                         }
                     }
 
@@ -361,15 +362,15 @@ namespace shakee.Humankind.FameByScoring
                             break;
                     } 
 
-                    x *= multi;       
+                    x *= weight;       
 
                     if (affinity == empireFaction.GameplayOrientation.ToString())
                     {
-                        x *= (1 + (float)(vEraLevel - 1) * 0.05f + catchup + 0.25f);
+                        x *= (1 + (float)(vEraLevel - 1) * eraLevelStep + 0.25f);
                     }
                     else
                     {
-                        x *= (1 + (float)(vEraLevel - 1) * 0.05f + catchup);
+                        x *= (1 + (float)(vEraLevel - 1) * eraLevelStep);
                     }                    
 
                     arr[i,1] = (FixedPoint)x;
@@ -409,7 +410,7 @@ namespace shakee.Humankind.FameByScoring
                 runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1], 2);
                 //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
             }
-            float steps = 0.20f;
+            
             
             runDebug("Famegain for Scoring Round", 2);
             for (int i = 0; i < numEmpires; i++)
@@ -427,7 +428,7 @@ namespace shakee.Humankind.FameByScoring
                 {
                     if (vEraLevel < (FixedPoint)Sandbox.MajorEmpires[k].GetPropertyValue("EraLevel"))
                     {
-                        catchup += 0.1f;
+                        catchup += catchupStep;
                     }
                 }
                 //runDebug("Assigned Values",2);
@@ -439,8 +440,8 @@ namespace shakee.Humankind.FameByScoring
                     {
                         if ((int)tmpArr[j,0] == i)
                         {
-                            fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
-                            runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
+                            fameGain *= (1 + (Math.Max((numRanks - j),0) * rankSteps));
+                            runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * rankSteps)) + " Fame: " + fameGain, 2);
                             break;
                         }                            
                     }
@@ -474,7 +475,7 @@ namespace shakee.Humankind.FameByScoring
                 runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1], 2);
                 //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
             }
-            float steps = 0.20f;
+
             runDebug("Famegain for EraChange",2);
             MajorEmpire empire = Amplitude.Mercury.Sandbox.Sandbox.MajorEmpires[empireIndex];
             FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(empireIndex);
@@ -489,7 +490,7 @@ namespace shakee.Humankind.FameByScoring
             {
                 if (vEraLevel < (FixedPoint)Sandbox.MajorEmpires[i].GetPropertyValue("EraLevel"))
                 {
-                    catchup += 0.1f;
+                    catchup += catchupStep;
                 }
             }
             int numRanks = (int)Math.Ceiling((float)numEmpires / 2) + 1;
@@ -500,8 +501,8 @@ namespace shakee.Humankind.FameByScoring
                 {                    
                     if ((int)tmpArr[j,0] == empireIndex)
                     {
-                        fameGain *= (1 + (Math.Max((numRanks - j),0) * steps));
-                        runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * steps)) + " Fame: " + fameGain, 2);
+                        fameGain *= (1 + (Math.Max((numRanks - j),0) * rankSteps));
+                        runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * rankSteps)) + " Fame: " + fameGain, 2);
                         break;
                     }                            
                 }
