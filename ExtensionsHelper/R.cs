@@ -602,14 +602,23 @@ namespace shakee.Humankind.FameByScoring
 #endregion
 #region battle
 		private static FieldInfo Battle_List_EmpiresOrdered = typeof(Battle).GetField("EmpiresOrdered", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo Battle_Dictionary_DeadUnitsByEmpireIndex = typeof(Battle).GetField("DeadUnitsByEmpireIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo Battle_AftermathInfo = typeof(Battle).GetField("AftermathInfo", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		public static List<Empire> EmpiresOrdered(this Battle self)
 		{
 			return (List<Empire>)R.Battle_List_EmpiresOrdered.GetValue(self);
 		}
+		public static Dictionary<int, List<BattleUnit>> DeadUnitsByEmpireIndex(this Battle self)
+		{
+			return (Dictionary<int, List<BattleUnit>>)R.Battle_Dictionary_DeadUnitsByEmpireIndex.GetValue(self);
+		}
+		public static BattleAftermathInfo AftermathInfo(this Battle self)
+		{
+			return (BattleAftermathInfo)R.Battle_AftermathInfo.GetValue(self);
+		}
 
-
-
+		
 
 
 #endregion
