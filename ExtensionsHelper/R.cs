@@ -9,6 +9,7 @@ using Amplitude.Mercury.Sandbox;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.UI;
 using Amplitude.Mercury.Data;
+using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.UI.Helpers;
 using Amplitude.UI.Interactables;
 using static Amplitude.UI.UIHierarchyManager;
@@ -606,17 +607,10 @@ namespace shakee.Humankind.FameByScoring
 		{
 			return (List<Empire>)R.Battle_List_EmpiresOrdered.GetValue(self);
 		}
-/* 		private static MethodInfo Battle_IBattleStateMachine_CheckTransition = typeof(IBattleStateMachine).GetMethod("CheckTransition", BindingFlags.Instance | BindingFlags.Public, null, new Type[]
-		{
-			typeof(StaticString)
-		}, null);
-		public static bool CheckTransition(this BaseSimulationEntity self, StaticString descriptorName)
-		{
-			return (bool)R.Battle_IBattleStateMachine_CheckTransition.Invoke(self, new object[]
-			{
-				descriptorName
-			});
-		} */
+
+
+
+
 
 #endregion
 #region Sandbox
@@ -651,7 +645,54 @@ namespace shakee.Humankind.FameByScoring
 
 		
 #endregion
+#region Simlulation Events
+		// internal int AttackerLeaderEmpireIndex;
 
+		// internal int DefenderLeaderEmpireIndex;
+
+		// internal BattleResult AttackerResult;
+
+		// internal BattleResult DefenderResult;
+
+		// internal BattleVictoryType VictoryType;
+
+		// internal Battle Battle;
+
+		private static FieldInfo SimulationEvent_BattleTerminated_AttackerLeaderEmpireIndex_FieldInfo = typeof(SimulationEvent_BattleTerminated).GetField("AttackerLeaderEmpireIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo SimulationEvent_BattleTerminated_DefenderLeaderEmpireIndex_FieldInfo = typeof(SimulationEvent_BattleTerminated).GetField("DefenderLeaderEmpireIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo SimulationEvent_BattleTerminated_AttackerResult_FieldInfo = typeof(SimulationEvent_BattleTerminated).GetField("AttackerResult", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo SimulationEvent_BattleTerminated_DefenderResult_FieldInfo = typeof(SimulationEvent_BattleTerminated).GetField("DefenderResult", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo SimulationEvent_BattleTerminated_VictoryType_FieldInfo = typeof(SimulationEvent_BattleTerminated).GetField("VictoryType", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo SimulationEvent_BattleTerminated_Battle_FieldInfo = typeof(SimulationEvent_BattleTerminated).GetField("Battle", BindingFlags.Instance | BindingFlags.NonPublic);
+	
+		public static int AttackerLeaderEmpireIndex(this SimulationEvent_BattleTerminated self)
+		{
+			return (int)R.SimulationEvent_BattleTerminated_AttackerLeaderEmpireIndex_FieldInfo.GetValue(self);
+		}
+		public static int DefenderLeaderEmpireIndex(this SimulationEvent_BattleTerminated self)
+		{
+			return (int)R.SimulationEvent_BattleTerminated_DefenderLeaderEmpireIndex_FieldInfo.GetValue(self);
+		}
+		public static BattleResult AttackerResult(this SimulationEvent_BattleTerminated self)
+		{
+			return (BattleResult)R.SimulationEvent_BattleTerminated_AttackerResult_FieldInfo.GetValue(self);
+		}
+		public static BattleResult DefenderResult(this SimulationEvent_BattleTerminated self)
+		{
+			return (BattleResult)R.SimulationEvent_BattleTerminated_DefenderResult_FieldInfo.GetValue(self);
+		}
+		public static BattleVictoryType VictoryType(this SimulationEvent_BattleTerminated self)
+		{
+			return (BattleVictoryType)R.SimulationEvent_BattleTerminated_VictoryType_FieldInfo.GetValue(self);
+		}
+		public static Battle Battle(this SimulationEvent_BattleTerminated self)
+		{
+			return (Battle)R.SimulationEvent_BattleTerminated_Battle_FieldInfo.GetValue(self);
+		}
+
+
+
+#endregion
 
 
 
