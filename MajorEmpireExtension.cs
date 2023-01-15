@@ -57,7 +57,7 @@ namespace shakee.Humankind.FameByScoring
             
             if (FameHistoryList.Count > 6)
             {
-                Console.WriteLine("List Scoring reached Limit {0}/6 -> cleanup. (Empire " + this.empire.Index().ToString() + ")", FameHistoryList.Count);
+                //Console.WriteLine("List Scoring reached Limit {0}/6 -> cleanup. (Empire " + this.empire.Index().ToString() + ")", FameHistoryList.Count);
                 FameHistory var2 = ScoringRound.GetHistory(empire, 0);
                 var2.Dispose();
                 FameHistoryList.Remove(FameHistoryList[0]);
@@ -65,7 +65,8 @@ namespace shakee.Humankind.FameByScoring
         }
 
         public int BattlesFought = 0;
-        public int BattlesWon = 0;        
+        public int BattlesWon = 0;
+        public int killedUnits = 0;
         public void CountBattle(int battleFought, int battlesWon)
         {
             BattlesFought += battleFought;

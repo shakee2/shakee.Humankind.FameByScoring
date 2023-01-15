@@ -36,6 +36,7 @@ namespace shakee.Humankind.FameByScoring
         {"SumOfStrategicResourceAccessCount","1","Warmonger"},
         {"BattlesFought","0.2","Warmonger"},
         {"BattlesWon","0.7","Warmonger"},
+        {"KilledUnits","0.05","Warmonger"},        
         // {"TerritoryCount","1","Expansionist"},
         // {"KilledUnitsByMe","0.1","Warmonger"},
         };
@@ -330,19 +331,11 @@ namespace shakee.Humankind.FameByScoring
                             x += (float)MajorEmpireSaveExtension.GetExtension(empire.Index()).BattlesFought;                               
                             break;
                         case "BattlesWon":                            
-                            x += (float)MajorEmpireSaveExtension.GetExtension(empire.Index()).BattlesWon;
-                            Console.WriteLine("Battles Won: " + x.ToString());
+                            x += (float)MajorEmpireSaveExtension.GetExtension(empire.Index()).BattlesWon;                            
                             break;
-                        /* case "KilledUnitsByMe":
-                            ref EmpireStatistics test = ref Snapshots.GameStatisticsSnapshot.PresentationData.EmpireStatistics[i];
-                            
-                            x += (float)test.AggregationData.NumberOfOtherUnitsKilledByMe;
-                            Console.WriteLine("Output ("+i+") Killed Units: " + test.AggregationData.NumberOfOtherUnitsKilledByMe.ToString());
-                            Console.WriteLine("Output ("+i+") Fought Battles " + test.NumberOfBattleFought.ToString());
-                            Console.WriteLine("Output ("+i+") Won Battles: " + test.ComputeNumberOfWonBattles().ToString());
-                            
-                            break; */
-                            // NumberOfOtherUnitsKilledByMe
+                        case "KilledUnits":                            
+                            x += (float)MajorEmpireSaveExtension.GetExtension(empire.Index()).killedUnits;                            
+                            break;
                         case "HolySite":
                             for (x1 = 0; x1 < empSettlements.Count; x1++)
                             {
