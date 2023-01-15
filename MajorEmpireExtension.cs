@@ -63,6 +63,14 @@ namespace shakee.Humankind.FameByScoring
                 FameHistoryList.Remove(FameHistoryList[0]);
             }
         }
+
+        public int BattlesFought = 0;
+        public int BattlesWon = 0;        
+        public void CountBattle(int battleFought, int battlesWon)
+        {
+            BattlesFought += battleFought;
+            BattlesWon += battlesWon;
+        }
     }
 
     public class FameHistory : ISerializable
