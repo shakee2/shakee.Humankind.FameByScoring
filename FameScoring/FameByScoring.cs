@@ -16,7 +16,7 @@ using Amplitude.Framework;
 namespace shakee.Humankind.FameByScoring  
 {
 
-    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.1")]
+    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.2")]
     public class FameByScoring : BaseUnityPlugin
     {
         const string PLUGIN_GUID = "shakee.Humankind.FameByScoring";
@@ -321,23 +321,18 @@ namespace shakee.Humankind.FameByScoring
                     Console.WriteLine("Scoring Needed for Turn " + turn.ToString());
                     ScoringRound.RoundScoring(true, turn);
                     turnCheck += (int)turnTmp;
-                }
-                
-                else if ((int)turn < turnCheck)
-                {
-                    
-                    Console.WriteLine("No Scoring for Turn " + turn.ToString());
-                    
-                }
+                }              
+
 
                 int finalTurn = turnCheck;
 
                 Console.WriteLine("Next TurnCheck {0}", finalTurn.ToString());
+                if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "False"))
+                {
+                    FameThresholds.CheckThreshold();
+                }   
             }
-            if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "False"))
-            {
-                FameThresholds.CheckThreshold();
-            }       
+                
         } 
     }
 
@@ -392,70 +387,46 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPrefix]
         public static bool TryEarnEraStar_One(DepartmentOfDevelopment __instance, ref EraStarInfo eraStarInfo)
 		{
-            // if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSetting, "On"))
-            // {
-            //     return true;
-            // }
-            
-                if (eraStarInfo.Thresholds == null)
-                {
-                    return false;
-                }
-                if (eraStarInfo.Level >= eraStarInfo.Thresholds.Length)
-                {
-                    return false;
-                }
-                if (eraStarInfo.Thresholds[eraStarInfo.Level] > eraStarInfo.Score)
-                {
-                    return false;
-                }
-            //Console.WriteLine("Getting Era Stars - Turn " + R.SandboxManager_Sandbox().Turn().ToString());
-                //eraStarInfo.CurrentReward
-                if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "True"))
-                {
-                    FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
-                    R.majorEmpire(__instance).FameScore.Value -= x;
-                    R.majorEmpire(__instance).FameScore.Value += x;          
-                    //ScoringRound.runDebug("Empire " + R.majorEmpire(__instance).Index().ToString() + " gains +" + x.ToString() + " Fame from " + eraStarInfo.EraStarDefinitionName.ToString(), 2);          
-                    //FameByScoring_Helper.AccumulateFame_New(R.majorEmpire(__instance), eraStarInfo.CurrentReward * 0.5f);
-                }
-                else if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "False"))
-                {
-                    FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
-                    R.majorEmpire(__instance).FameScore.Value -= x;
-                    //FameByScoring_Helper.AccumulateFame_New(R.majorEmpire(__instance), eraStarInfo.CurrentReward);
-                }
-                else
-                {
-                    FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value) * (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame)); 
-                    R.majorEmpire(__instance).FameScore.Value -= eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
-                    R.majorEmpire(__instance).FameScore.Value += x;
-                    //ScoringRound.runDebug("Empire " + R.majorEmpire(__instance).Index().ToString() + " gains +" + x.ToString() + " Fame from " + eraStarInfo.EraStarDefinitionName.ToString(), 2);               
-                }
+            if (eraStarInfo.Thresholds == null)
+            {
+                return false;
+            }
+            if (eraStarInfo.Level >= eraStarInfo.Thresholds.Length)
+            {
+                return false;
+            }
+            if (eraStarInfo.Thresholds[eraStarInfo.Level] > eraStarInfo.Score)
+            {
+                return false;
+            }
 
-            //     eraStarInfo.UnlockTurn[eraStarInfo.Level] = R.SandboxManager_Sandbox().Turn();
-            //     eraStarInfo.UnlockedRewards[eraStarInfo.Level] = eraStarInfo.CurrentRewardWithFameBonus;
-            // Console.WriteLine("Level " + eraStarInfo.EraStarDefinitionName.ToString() + " | Rewards: " +eraStarInfo.UnlockedRewards[eraStarInfo.Level].ToString());
-            
-            //     R.SimulationEvent_FameScoreChanged_Raise(__instance, R.majorEmpire(__instance), (int)eraStarInfo.CurrentReward);
-            //     eraStarInfo.Level++;
-                
-                //var eraStarDefinitionDatabase = Databases.GetDatabase<EraStarDefinition>();
-                if (!GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "True") && R.majorEmpire(__instance).EraLevel.Value > 0)
-                {
-                    R.majorEmpire(__instance).EraStarsCount.Value -= 1;
-                    R.majorEmpire(__instance).SumOfEraStars.Value -= 1;
-                }
-            //     EraStarDefinition value = ScriptableObject.CreateInstance<EraStarDefinition>();
-            //     value = eraStarDefinitionDatabase.GetValue(eraStarInfo.EraStarDefinitionName);
-                
-            // Console.WriteLine("GameplayOri: {0} | Name: {1} | MaxReward: {3}",value.GameplayOrientation.ToString(), value.Name.ToString(), value.MaxFameReward.ToString());
-            // Console.WriteLine("Threshold: " + eraStarInfo.Thresholds.ToString());
-            //     R.ComputeEraStarRewards(value, ref eraStarInfo);
-            //     R.SimulationEvent_EraStarEarned_Raise(__instance, eraStarInfo.EraStarDefinitionName, eraStarInfo.Level - 1, R.majorEmpire(__instance).Index());
-            //     R.SetupEvolutionPeriodicNotificationIfRequired();
+            if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "True"))
+            {
+                FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                R.majorEmpire(__instance).FameScore.Value -= x;
+                R.majorEmpire(__instance).FameScore.Value += x;          
 
-                return true;
+            }
+            else if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "False"))
+            {
+                FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                R.majorEmpire(__instance).FameScore.Value -= x;
+
+            }
+            else
+            {
+                FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value) * (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame)); 
+                R.majorEmpire(__instance).FameScore.Value -= eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                R.majorEmpire(__instance).FameScore.Value += x;                
+            }
+
+            if (!GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "True") && R.majorEmpire(__instance).EraLevel.Value > 0)
+            {
+                R.majorEmpire(__instance).EraStarsCount.Value -= 1;
+                R.majorEmpire(__instance).SumOfEraStars.Value -= 1;
+            }
+        
+            return true;
             
 	  	}
     }
