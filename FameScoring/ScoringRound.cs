@@ -13,7 +13,7 @@ namespace shakee.Humankind.FameByScoring
     public class ScoringRound
     {
         public static float rankSteps = 0.10f;
-        public static float catchupStep = 0.1f;
+        public static float catchupStep = 0.05f;
         public static float eraLevelStep = 0.05f;
         public static int debuglevel = 0; // 0 = none, 1 = low, 2 = some details, 3 = all details
                 
@@ -97,13 +97,8 @@ namespace shakee.Humankind.FameByScoring
                 {
                     majorSave = MajorEmpireSaveExtension.GetExtension(empireIndex);
                     majorSave.lastFameRankEraChange = 0;
-                }
- 
-                // var listCat = new List<object>();
-                // listCat.Add((object)arrState);
-                // listCat.Add((object)arrEconomy);
-                // listCat.Add((object)arrMilitary);
-                // listCat.Add((object)arrCity);
+                } 
+
                 FameHistory var;
 
                 for (int i = 0; i < listCat.Count; i++)
