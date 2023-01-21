@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 using Amplitude;
 using Amplitude.Framework.Simulation;
 using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.Sandbox;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.UI;
-using Amplitude.Mercury.Data;
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.UI.Helpers;
 using Amplitude.UI.Interactables;
-using static Amplitude.UI.UIHierarchyManager;
 
 namespace shakee.Humankind.FameByScoring
 {

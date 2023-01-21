@@ -18,7 +18,7 @@ namespace shakee.Humankind.FameByScoring
         public static int fontSizeLarge = 16;
         public static string[] labelList = new string[] {
                 "Scoring Turn",
-                "Famegain",
+                "Fame Gain",
                 "Total Rank",
                 "Military",
                 "State",

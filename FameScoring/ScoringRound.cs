@@ -242,7 +242,7 @@ namespace shakee.Humankind.FameByScoring
             {
                 runDebug("Empire " + tmpArr[i,0].ToString() + " with Value " + tmpArr[i,1].ToString(),3);
             }
-            int numRanks = (int)Math.Ceiling((float)arrRank.GetLength(0) / 2) + 1;
+            int numRanks = (int)Math.Ceiling((float)arrRank.GetLength(0) / 2);
             for (int i = 0; i < arrRank.GetLength(0); i++) // empire loop
             {
                 for (int j = 0; j < tmpArr.GetLength(0); j++) // rank loop
@@ -418,6 +418,9 @@ namespace shakee.Humankind.FameByScoring
                 FixedPoint oldFame = empire.GetPropertyValue("FameScore");
                 FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");
                 FixedPoint vBonusFame = empire.GetPropertyValue("FameGainBonus");
+                if (vEraLevel == 0)
+                    continue;
+                    
                 float catchup = 0f;
                 for (int k = 0; k < numEmpires; k++)
                 {
@@ -427,7 +430,7 @@ namespace shakee.Humankind.FameByScoring
                     }
                 }
                 //runDebug("Assigned Values",2);
-                int numRanks = (int)Math.Ceiling((float)numEmpires / 2) + 1;
+                int numRanks = (int)Math.Ceiling((float)numEmpires / 2);
                 fameGain = baseFame * fameMulti;
                 if (ranking >= 2)
                 {
@@ -488,7 +491,7 @@ namespace shakee.Humankind.FameByScoring
                     catchup += catchupStep;
                 }
             }
-            int numRanks = (int)Math.Ceiling((float)numEmpires / 2) + 1;
+            int numRanks = (int)Math.Ceiling((float)numEmpires / 2);
             fameGain = baseFame * fameMulti;
             if (ranking >= 2)
             {
