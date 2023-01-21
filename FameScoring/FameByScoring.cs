@@ -5,7 +5,6 @@ using Amplitude;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.Data.Simulation;
 using Amplitude.Mercury.Interop;
-using Amplitude.Mercury.Sandbox;
 using HumankindModTool;
 using Amplitude.Framework.Options;
 using Amplitude.Mercury.Data.GameOptions;
@@ -16,7 +15,7 @@ using Amplitude.Framework;
 namespace shakee.Humankind.FameByScoring  
 {
 
-    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.2")]
+    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.3")]
     public class FameByScoring : BaseUnityPlugin
     {
         const string PLUGIN_GUID = "shakee.Humankind.FameByScoring";
@@ -420,7 +419,7 @@ namespace shakee.Humankind.FameByScoring
                 R.majorEmpire(__instance).FameScore.Value += x;                
             }
 
-            if (!GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "True") && R.majorEmpire(__instance).EraLevel.Value > 0)
+            if (!GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "True") && R.majorEmpire(__instance).GetPropertyValue("EraLevel") > 0)
             {
                 R.majorEmpire(__instance).EraStarsCount.Value -= 1;
                 R.majorEmpire(__instance).SumOfEraStars.Value -= 1;

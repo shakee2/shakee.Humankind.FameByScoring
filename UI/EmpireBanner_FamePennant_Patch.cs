@@ -1,29 +1,9 @@
 using System;
-using BepInEx;
 using HarmonyLib;
-using Amplitude;
-using Amplitude.Framework;
-using Amplitude.Framework.Networking;
-using Amplitude.Framework.Overlay;
-using Amplitude.Mercury.Interop;
-using Amplitude.Mercury.Runtime;
-using Amplitude.Mercury.Sandbox;
 using UnityEngine;
-using System.Collections;
-using Amplitude.Framework.Simulation;
-using Amplitude.Mercury.Simulation;
-using Amplitude.Mercury.Data.Simulation;
-using Modding.Humankind.DevTools;
-using HumankindModTool;
 using Amplitude.Mercury.UI;
-using Amplitude.Mercury.UI.Helpers;
-using Amplitude.Mercury.UI.Tooltips;
-using Amplitude.Mercury.UI.Windows;
 using Amplitude.UI;
 using Amplitude.UI.Interactables;
-using Amplitude.UI.Tooltips;
-using Amplitude.UI.Windows;
-using Amplitude.Mercury;
 
 namespace shakee.Humankind.FameByScoring
 {
