@@ -51,6 +51,9 @@ namespace shakee.Humankind.FameByScoring
             empireIndex = serializer.SerializeElement("empireIndex", empireIndex);
             lastFameRankEraChange = serializer.SerializeElement("lastFameRankEraChange", lastFameRankEraChange);
             lastFameGainEraChange = serializer.SerializeElement("lastFameGainEraChange", lastFameGainEraChange);
+            BattlesFought = serializer.SerializeElement("BattlesFought", BattlesFought);
+            BattlesWon = serializer.SerializeElement("BattlesWon", BattlesWon);
+            killedUnits = serializer.SerializeElement("killedUnits", killedUnits);
 		}
         public void CheckDispose ()
         {
@@ -64,8 +67,8 @@ namespace shakee.Humankind.FameByScoring
             }
         }
 
-        public int BattlesFought = 0;
-        public int BattlesWon = 0;
+        public int BattlesFought;
+        public int BattlesWon;
         public int killedUnits = 0;
         public void CountBattle(int battleFought, int battlesWon)
         {

@@ -1,4 +1,6 @@
+using BepInEx;
 using HarmonyLib;
+using System;
 using Amplitude.Mercury.Simulation;
 using Amplitude.Mercury.Interop;
 using Amplitude.Mercury.Sandbox;
@@ -7,45 +9,48 @@ using HumankindModTool;
 
 namespace shakee.Humankind.FameByScoring
 {
-    [HarmonyPatch(typeof(StatisticReporter_BattleTerminated))]
-    public class StatisticReporter_BattleTerminated_Patch
+    
+    [HarmonyPatch(typeof(SimulationEvent_BattleTerminated))]
+    public class SimulationEvent_BattleTerminated_Patch
     {
-        [HarmonyPatch("SimulationEventRaised_BattleTerminated")]
-        [HarmonyPostfix]
-        public static void SimulationEventRaised_BattleTerminated (StatisticReporter_BattleTerminated __instance, object sender, SimulationEvent_BattleTerminated battleTerminated)
+        [HarmonyPatch("Raise")]
+        [HarmonyPrefix]
+        public static bool Raise (object sender, Battle battle)
         {
-            if (GameOptionHelper.GetGameOption(FameByScoring.FameScoringOption) != "0")
-            {
-                int numEmpires = Sandbox.NumberOfMajorEmpires - 1;
-                int attackerEmpire = battleTerminated.AttackerLeaderEmpireIndex();
-                int defenderEmpire = battleTerminated.DefenderLeaderEmpireIndex();
-                Battle battle = battleTerminated.Battle();
+            int numEmpires = Sandbox.NumberOfMajorEmpires;
+            int attackerIndex = battle.AttackerGroup().LeaderEmpireIndex();
+            int defenderIndex = battle.DefenderGroup().LeaderEmpireIndex();
+            BattleResult attackerResult = battle.AttackerGroup().Result();
+            BattleResult defenderResult = battle.DefenderGroup().Result();
 
-                if (battleTerminated.AttackerResult() == BattleResult.Victory)
-                {   
-                    if (attackerEmpire <= numEmpires && attackerEmpire >= 0)
-                        MajorEmpireSaveExtension.GetExtension(attackerEmpire).CountBattle(1,1);
-                    if (defenderEmpire <= numEmpires && defenderEmpire >= 0)
-                        MajorEmpireSaveExtension.GetExtension(defenderEmpire).CountBattle(1,0);
-                }
-                else if (battleTerminated.AttackerResult() == BattleResult.Draw)
-                {
-                    if (attackerEmpire <= numEmpires && attackerEmpire >= 0)
-                        MajorEmpireSaveExtension.GetExtension(attackerEmpire).CountBattle(1,0);
-                    if (defenderEmpire <= numEmpires && defenderEmpire >= 0)
-                        MajorEmpireSaveExtension.GetExtension(defenderEmpire).CountBattle(1,0);
-                }
-                else
-                {
-                    if (attackerEmpire <= numEmpires && attackerEmpire >= 0)
-                        MajorEmpireSaveExtension.GetExtension(attackerEmpire).CountBattle(1,0);
-                    if (defenderEmpire <= numEmpires && defenderEmpire >= 0)
-                        MajorEmpireSaveExtension.GetExtension(defenderEmpire).CountBattle(1,1);
-                }
+            if (attackerResult == BattleResult.Victory)
+            {   
+                //Console.WriteLine("Attacker Win: " + attackerIndex.ToString() + " / " + defenderIndex.ToString());
+                if (attackerIndex < numEmpires && attackerIndex >= 0)
+                    MajorEmpireSaveExtension.GetExtension(attackerIndex).CountBattle(1,1);
+                if (defenderIndex < numEmpires && defenderIndex >= 0)
+                    MajorEmpireSaveExtension.GetExtension(defenderIndex).CountBattle(1,0);
             }
-            
+            else if (attackerResult == BattleResult.Defeat)
+            {
+                //Console.WriteLine("Attacker Draw: " + attackerIndex.ToString() + " / " + defenderIndex.ToString());
+                if (attackerIndex < numEmpires && attackerIndex >= 0)
+                    MajorEmpireSaveExtension.GetExtension(attackerIndex).CountBattle(1,0);
+                if (defenderIndex < numEmpires && defenderIndex >= 0)
+                    MajorEmpireSaveExtension.GetExtension(defenderIndex).CountBattle(1,1);
+            }
+            else if (attackerResult == BattleResult.Draw)
+            {
+                //Console.WriteLine("Attacker Loss: " + attackerIndex.ToString() + " / " + defenderIndex.ToString());
+                if (attackerIndex < numEmpires && attackerIndex >= 0)
+                    MajorEmpireSaveExtension.GetExtension(attackerIndex).CountBattle(1,0);
+                if (defenderIndex < numEmpires && defenderIndex >= 0)
+                    MajorEmpireSaveExtension.GetExtension(defenderIndex).CountBattle(1,0);
+            }            
+            return true;
         }
     }
+
     [HarmonyPatch(typeof(SimulationEvent_UnitKilledByOther))]
     public class SimulationEvent_UnitKilledByOther_Patch
     {
@@ -56,7 +61,7 @@ namespace shakee.Humankind.FameByScoring
             if (GameOptionHelper.GetGameOption(FameByScoring.FameScoringOption) != "0")
             {
                 int numEmpires = Sandbox.NumberOfMajorEmpires;
-                if (aggressor.Index() <= numEmpires && aggressor.Index() >= 0)
+                if (aggressor.Index() < numEmpires && aggressor.Index() >= 0)
                 {
                     if (aggressor.EraLevel.Value >= 1)
                     MajorEmpireSaveExtension.GetExtension(aggressor.Index()).killedUnits += 1;                
