@@ -55,7 +55,7 @@ namespace shakee.Humankind.FameByScoring
                             {                            
                                 
                                 GUILayout.BeginHorizontal(BackgroundStyle.Get(BackgroundStyle.DarkishTextColor));                                
-                                    GUILayout.Label("Fame Threshold: " + empire.FameScore.Value + " / " + (empireSave.lastFameScoreEraChange + FameThresholds.fameThresholdStep * (1 + empire.EraStarsCount.Value)) + " (" + (empireSave.lastFameScoreEraChange + FameThresholds.fameThresholdStep * (1 + empire.EraStarsCount.Value) - empire.FameScore.Value) + ")",BackgroundStyle.NormalCenter(fontSizeLarge));
+                                    GUILayout.Label("Fame Threshold of " + FameThresholds.fameThresholdStep + ": " + (empireSave.lastFameScoreEraChange + FameThresholds.fameThresholdStep * (1 + empire.EraStarsCount.Value)) + " (" + (empireSave.lastFameScoreEraChange + FameThresholds.fameThresholdStep * (1 + empire.EraStarsCount.Value) - empire.FameScore.Value) + ")",BackgroundStyle.NormalCenter(fontSizeLarge));
                                     //GUILayout.Label(FameThresholds.fameThesholdStep.ToString());                               
                                 GUILayout.EndHorizontal();
                             }

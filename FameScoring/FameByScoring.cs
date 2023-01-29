@@ -15,7 +15,7 @@ using Amplitude.Framework;
 namespace shakee.Humankind.FameByScoring  
 {
 
-    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.3")]
+    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.4")]
     public class FameByScoring : BaseUnityPlugin
     {
         const string PLUGIN_GUID = "shakee.Humankind.FameByScoring";
