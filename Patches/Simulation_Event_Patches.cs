@@ -69,8 +69,19 @@ namespace shakee.Humankind.FameByScoring
             }
         }
     }
-
-
-
+    [HarmonyPatch(typeof(EndGameController))]
+    public class EndGameController_Patch
+    {
+        [HarmonyPatch("UpdateEndGameStatus")]
+        [HarmonyPostfix]
+        public static void UpdateEndGameStatus (EndGameController __instance)    
+        {
+            if (__instance.EndGameStatus() == EndGameStatus.LastTurn)
+            {
+                ScoringRound.RoundScoring(true, endGame: true);
+                Console.WriteLine("End Game");
+            }
+        }
+    }
 }
 
