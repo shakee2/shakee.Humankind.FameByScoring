@@ -15,7 +15,7 @@ namespace shakee.Humankind.FameByScoring
         public static float rankSteps = 0.10f;
         public static float catchupStep = 0.05f;
         public static float eraLevelStep = 0.05f;
-        public static int debuglevel = 3; // 0 = none, 1 = low, 2 = some details, 3 = all details
+        public static int debuglevel = 0; // 0 = none, 1 = low, 2 = some details, 3 = all details
                 
         static string[,] arrState = new string[,]{
         {"CityCount","3","Expansionist"},
