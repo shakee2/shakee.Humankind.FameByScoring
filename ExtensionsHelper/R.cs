@@ -696,6 +696,29 @@ namespace shakee.Humankind.FameByScoring
 			return (Battle)R.SimulationEvent_BattleTerminated_Battle_FieldInfo.GetValue(self);
 		}
 
+		private static FieldInfo Battle_AttackerGroup_FieldInfo = typeof(Battle).GetField("AttackerGroup", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo Battle_DefenderGroup_FieldInfo = typeof(Battle).GetField("DefenderGroup", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo BattleGroup_LeaderEmpireIndex_FieldInfo = typeof(BattleGroup).GetField("LeaderEmpireIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo BattleGroup_Result_FieldInfo = typeof(BattleGroup).GetField("Result", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static BattleGroup AttackerGroup(this Battle self)
+		{
+			return (BattleGroup)R.Battle_AttackerGroup_FieldInfo.GetValue(self);
+		}
+		public static BattleGroup DefenderGroup(this Battle self)
+		{
+			return (BattleGroup)R.Battle_DefenderGroup_FieldInfo.GetValue(self);
+		}
+		public static int LeaderEmpireIndex(this BattleGroup self)
+		{
+			return (int)R.BattleGroup_LeaderEmpireIndex_FieldInfo.GetValue(self);
+		}
+		public static BattleResult Result(this BattleGroup self)
+		{
+			return (BattleResult)R.BattleGroup_Result_FieldInfo.GetValue(self);
+		}
+
+
+
 
 
 #endregion
