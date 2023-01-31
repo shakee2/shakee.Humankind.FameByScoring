@@ -17,16 +17,16 @@ namespace shakee.Humankind.FameByScoring
 
         void DoLoad()
         {
-            Console.WriteLine("Gameobject DoLoad Test");            
+            //Console.WriteLine("Gameobject DoLoad Test");            
         }
         new void Start()
         {
-            Console.WriteLine("Gameobject Start Test"); 
+            //Console.WriteLine("Gameobject Start Test"); 
  
         }
         FameHistoryGUI()
         {
-            Console.WriteLine("Class Object Start Test"); 
+            //Console.WriteLine("Class Object Start Test"); 
         }
 
     }

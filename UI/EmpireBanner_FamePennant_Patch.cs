@@ -16,7 +16,7 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPostfix]  
         public static void OnBeginShow(EmpireBanner_FamePennant __instance, bool instant)
         {
-            Console.WriteLine("Show Fame Pennant");
+            //Console.WriteLine("Show Fame Pennant");
         }    
 
         public static void SetupComponent()

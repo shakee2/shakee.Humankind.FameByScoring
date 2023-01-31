@@ -58,7 +58,7 @@ namespace shakee.Humankind.FameByScoring
             (object)arrCity,
         };
 
-        public static void RoundScoring (bool scoring, int turn = -1, int empireIndex = -1) //bool scoring is for checking if round scoring or era change scoring
+        public static void RoundScoring (bool scoring, int turn = -1, int empireIndex = -1, bool endGame = false) //bool scoring is for checking if round scoring or era change scoring
         {
             turn = R.SandboxManager_Sandbox().Turn();
             MajorEmpire empire;
@@ -66,7 +66,7 @@ namespace shakee.Humankind.FameByScoring
             
             int calc = 0;   
             int numEmpires = Amplitude.Mercury.Sandbox.Sandbox.NumberOfMajorEmpires;
-            int ranking = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameScoringOption));
+            int ranking = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameScoringOptionType));
             runDebug("Scoring Type: " + ranking.ToString(),2);
             FixedPoint[,] arrFame = new FixedPoint[numEmpires,3]; // 0 = index, 1 = old famescore, 2 = fame gain
             List<MajorEmpire> listEmpires = new List<MajorEmpire>();
@@ -112,7 +112,7 @@ namespace shakee.Humankind.FameByScoring
                     FetchStuffRound(numEmpires, arrtmp, ref arrRank, ranking);
                     if (scoring) // Round Scoring
                     {                        
-                        DistributeFameRound(numEmpires, calc, ref arrRank, ref arrFame, ranking);
+                        DistributeFameRound(numEmpires, calc, ref arrRank, ref arrFame, ranking, endGame);
                         FillCategoryHistory (numEmpires, arrRank, i);
                     }
                     else // Era Change Scoring
@@ -250,6 +250,7 @@ namespace shakee.Humankind.FameByScoring
                     if (arrRank[i,0] == tmpArr[j,0]) 
                     {
                         arrRank[i,1] += (1 + (Math.Max((numRanks - j),0) * 2));
+                        break;
                     }
                 }            
             }
@@ -389,7 +390,7 @@ namespace shakee.Humankind.FameByScoring
 
 
         // Is done per Category
-        public static void DistributeFameRound (int numEmpires, int calc, ref FixedPoint[,] arrRank, ref FixedPoint[,] arrFame, int ranking)
+        public static void DistributeFameRound (int numEmpires, int calc, ref FixedPoint[,] arrRank, ref FixedPoint[,] arrFame, int ranking, bool endGame = false)
         {
             runDebug("Running Fame Distribution | Scoringtype: " + ranking.ToString(),1);
             FixedPoint baseFame = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameBaseGain));
@@ -450,7 +451,8 @@ namespace shakee.Humankind.FameByScoring
                 }
                 //fameGain *= fameMulti;                
                 fameGain *= (1 + vBonusFame + catchup);
-
+                if (endGame == true)
+                    fameGain *= float.Parse(GameOptionHelper.GetGameOption(FameByScoring.EndGameScoringSettingMultiplier));
                 empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
                 arrFame[i,2] += fameGain;
                 runDebug("ScoringRound - Empire: " + i.ToString() + " | Famegain: +" + fameGain.ToString(),2);                         

@@ -716,10 +716,11 @@ namespace shakee.Humankind.FameByScoring
 		{
 			return (BattleResult)R.BattleGroup_Result_FieldInfo.GetValue(self);
 		}
-
-
-
-
+		private static FieldInfo EndGameController_EndGameStatus = typeof(EndGameController).GetField("EndGameStatus", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static EndGameStatus EndGameStatus(this EndGameController self)
+		{
+			return (EndGameStatus)R.EndGameController_EndGameStatus.GetValue(self);
+		}
 
 #endregion
 
