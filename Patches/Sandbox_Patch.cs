@@ -47,16 +47,16 @@ namespace shakee.Humankind.FameByScoring
 			ModDefaultingOff = false;
 			try
 			{
-				int ranking = -1;
-				ranking = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameScoringOptionType));
+				
+				bool scoringRoundsOff = GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption,"false");
 				//Console.WriteLine(ranking.ToString());
 				GameSaveDescriptor gameSave = parameter as GameSaveDescriptor;
-				if (gameSave == null && ranking <= 0)
+				if (gameSave == null && scoringRoundsOff)
 				{
 					throw new Exception("[FameByScoring] No GameSave and Ranking Off");
 				}
 				SandboxStartSettings sandboxStartSettings = parameter as SandboxStartSettings;
-				if (sandboxStartSettings == null && ranking <= 0)
+				if (sandboxStartSettings == null && scoringRoundsOff)
 				{
 					throw new Exception("[FameByScoring] No SandBox Startsettings");
 				}
