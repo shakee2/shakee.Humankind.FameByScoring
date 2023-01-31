@@ -48,7 +48,7 @@ namespace shakee.Humankind.FameByScoring
 			try
 			{
 				int ranking = -1;
-				ranking = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameScoringOption));
+				ranking = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameScoringOptionType));
 				//Console.WriteLine(ranking.ToString());
 				GameSaveDescriptor gameSave = parameter as GameSaveDescriptor;
 				if (gameSave == null && ranking <= 0)

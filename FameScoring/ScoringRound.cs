@@ -66,7 +66,7 @@ namespace shakee.Humankind.FameByScoring
             
             int calc = 0;   
             int numEmpires = Amplitude.Mercury.Sandbox.Sandbox.NumberOfMajorEmpires;
-            int ranking = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameScoringOption));
+            int ranking = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameScoringOptionType));
             runDebug("Scoring Type: " + ranking.ToString(),2);
             FixedPoint[,] arrFame = new FixedPoint[numEmpires,3]; // 0 = index, 1 = old famescore, 2 = fame gain
             List<MajorEmpire> listEmpires = new List<MajorEmpire>();
@@ -250,6 +250,7 @@ namespace shakee.Humankind.FameByScoring
                     if (arrRank[i,0] == tmpArr[j,0]) 
                     {
                         arrRank[i,1] += (1 + (Math.Max((numRanks - j),0) * 2));
+                        break;
                     }
                 }            
             }
@@ -451,7 +452,7 @@ namespace shakee.Humankind.FameByScoring
                 //fameGain *= fameMulti;                
                 fameGain *= (1 + vBonusFame + catchup);
                 if (endGame == true)
-                    fameGain *= 5;
+                    fameGain *= float.Parse(GameOptionHelper.GetGameOption(FameByScoring.EndGameScoringSettingMultiplier));
                 empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
                 arrFame[i,2] += fameGain;
                 runDebug("ScoringRound - Empire: " + i.ToString() + " | Famegain: +" + fameGain.ToString(),2);                         

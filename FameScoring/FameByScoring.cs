@@ -15,7 +15,7 @@ using Amplitude.Framework;
 namespace shakee.Humankind.FameByScoring  
 {
 
-    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.4")]
+    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.5")]
     public class FameByScoring : BaseUnityPlugin
     {
         const string PLUGIN_GUID = "shakee.Humankind.FameByScoring";
@@ -37,18 +37,37 @@ namespace shakee.Humankind.FameByScoring
             
 			ControlType = 0,
 			Key = "GameOption_shakee_FameScoring",
-			DefaultValue = "0",
+			DefaultValue = "false",
             editbleInGame = false,
-			Title = "[FAME] Scoring Rounds: Fame Distribution",
-			Description = "Sets how fame is generated and distributed. If activated, you gain fame every few turns and when an empire changes era.",
+			Title = "[FAME] Scoring Rounds Setting",
+			Description = "Enables or disables scoring rounds. If activated, you gain fame every few turns and when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
 			States = 
 			{
                 new GameOptionStateInfo{
-                    Title = "Deactivate",
+                    Title = "Disabled",
                     Description = "Fame by Scoring Rounds is deactivated.",
-                    Value = "0"
+                    Value = "false"
                 },
+                new GameOptionStateInfo{
+                    Title = "Enabled",
+                    Description = "Scoring Rounds are enabled.",
+                    Value = "true"
+                },
+			}
+		};
+        public static GameOptionInfo FameScoringOptionType = new GameOptionInfo
+		{
+            
+			ControlType = 0,
+			Key = "GameOption_shakee_FameScoringType",
+			DefaultValue = "3",
+            editbleInGame = false,
+			Title = "[FAME] Scoring Rounds: Fame Distribution",
+			Description = "Sets how fame is generated and distributed. You gain fame every few turns and when an empire changes era by the chosen method.",
+			GroupKey = "GameOptionGroup_LobbyPaceOptions",
+			States = 
+			{
                 new GameOptionStateInfo{
                     Title = "by Ratio",
                     Description = "Fame is distributed by your ratio in comparison to all other Empires per category. The fame gains can vary wildy between empires.",
@@ -72,7 +91,7 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_NumberFameScoring",
 			DefaultValue = "8",
-            editbleInGame = true,
+            editbleInGame = false,
 			Title = "[FAME] Scoring Rounds: Turn Intervall",
 			Description = "Sets after how many turns a fame scoring round is triggered. Does not affect a fame scoring when an empire changes era.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
@@ -107,7 +126,7 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_FameGainMultiplier",
 			DefaultValue = "1",
-            editbleInGame = true,
+            editbleInGame = false,
 			Title = "[FAME] Scoring Rounds: Fame Modifier",
 			Description = "Setting for adjusting the fame gain per Scoring Round. Multiplies the base fame by this amount.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
@@ -146,7 +165,7 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_FameTurnMultiplier",
 			DefaultValue = "true",
-            editbleInGame = true,
+            editbleInGame = false,
 			Title = "[FAME] Scoring Rounds: GameSpeed Modifier",
 			Description = "If enabled, the turn for scoring will be modified by the gamespeed multiplier.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
@@ -170,7 +189,7 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_FameBaseGain",
 			DefaultValue = "20",
-            editbleInGame = true,
+            editbleInGame = false,
 			Title = "[FAME] Scoring Rounds: Base Fame",
 			Description = "Customize the base fame which is used for scoring rounds per scoring category. For Ratio it gets multiplied by number of empires. For Ranking it is used as the base fame gain.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
@@ -214,7 +233,7 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_EraStarSettingFame",
 			DefaultValue = "True",
-            editbleInGame = true,
+            editbleInGame = false,
 			Title = "[FAME] Era Stars: Fame Gain Setting",
 			Description = "Setting for controlling fame gain from Era Stars.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
@@ -263,7 +282,7 @@ namespace shakee.Humankind.FameByScoring
 			ControlType = 0,
 			Key = "GameOption_shakee_EraStarSettingStars",
 			DefaultValue = "True",
-            editbleInGame = true,
+            editbleInGame = false,
 			Title = "[FAME] Era Stars: Star Gain Method",
 			Description = "Setting for changing how era stars are gained. Default or a new method -> Fame Thresholds. They dependg on your current fame score and each star needs a certain amount of fame. When changing era, the new thresholds are always current famescore + threashold.",
 			GroupKey = "GameOptionGroup_LobbyPaceOptions",
@@ -281,77 +300,67 @@ namespace shakee.Humankind.FameByScoring
                 },
             }
         };
+        public static GameOptionInfo EndGameScoringSetting = new GameOptionInfo
+		{
+			ControlType = 0,
+			Key = "GameOption_shakee_EndGameScoringSetting",
+			DefaultValue = "false",
+            editbleInGame = false,
+			Title = "[FAME] Endgame Scoring",
+			Description = "Enables or disables the endgame scoring round. It will trigger on the last turn. This can be used Standalone.",
+			GroupKey = "GameOptionGroup_LobbyPaceOptions",
+			States = 
+			{
+                new GameOptionStateInfo{
+                    Title = "Do Scoring",
+                    Description = "On the last turn before the game ends there will be one scoring round. It uses the other fame settings and the endgame scoring multiplier.",
+                    Value = "true"
+                },
+                new GameOptionStateInfo{
+                    Title = "No Scoring",
+                    Description = "No Endgame Scoring.",
+                    Value = "false"
+                },
+            }
+        };
+        public static GameOptionInfo EndGameScoringSettingMultiplier = new GameOptionInfo
+		{
+			ControlType = 0,
+			Key = "GameOption_shakee_EndGameScoringSettingMultiplier",
+			DefaultValue = "5",
+            editbleInGame = false,
+			Title = "[FAME] Endgame Scoring Multiplier",
+			Description = "Endgame scoring multiplier. It uses the above settings for fame distribution, base fame and fame modifier.",
+			GroupKey = "GameOptionGroup_LobbyPaceOptions",
+            
+			States = 
+			{
+                new GameOptionStateInfo{
+                    Title = "5x",
+                    Description = "",
+                    Value = "5",                    
+                },
+                new GameOptionStateInfo{
+                    Title = "10x",
+                    Description = "",
+                    Value = "10",                    
+                },
+                new GameOptionStateInfo{
+                    Title = "15x",
+                    Description = "",
+                    Value = "15",                    
+                },
+                new GameOptionStateInfo{
+                    Title = "20x",
+                    Description = "",
+                    Value = "20",                    
+                },
+
+            }
+        };
 #endregion
 
     }
-
-    [HarmonyPatch(typeof(SimulationEvent_NewTurnBegin))]
-    public class NewTurn_Patch 
-    {
-        [HarmonyPatch("Raise")]    
-        [HarmonyPostfix]   
-        public static void Raise (SimulationEvent_NewTurnBegin __instance, object sender, ushort turn) {
-            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "0"))
-            {        
-                EmpireBanner_FamePennant_Patch.SetupComponent();
-                float gameSpeed;
-                int gameOptionTurns = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
-                if (GameOptionHelper.CheckGameOption(FameByScoring.FameTurnMultiplier,"true"))
-                {
-                    gameSpeed = Amplitude.Mercury.Interop.AI.Snapshots.Game.GameSpeedMultiplier;
-                }
-                else
-                {
-                    gameSpeed = 1f;
-                }
-                
-                float turnTmp = gameOptionTurns * gameSpeed;
-                int turnCheck = (int)turnTmp;             
-
-                while ((int)turn > turnCheck) 
-                {
-                    
-                    turnCheck += (int)turnTmp;
-                    
-                } 
-
-                if ((int)turn == turnCheck)
-                {
-                    Console.WriteLine("Scoring Needed for Turn " + turn.ToString());
-                    ScoringRound.RoundScoring(true, turn);
-                    turnCheck += (int)turnTmp;
-                }              
-
-
-                int finalTurn = turnCheck;
-
-                Console.WriteLine("Next TurnCheck {0}", finalTurn.ToString());
-                if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "False"))
-                {
-                    FameThresholds.CheckThreshold();
-                }   
-            }
-                
-        } 
-    }
-
-
-    [HarmonyPatch(typeof(SimulationEvent_EraChanged))]
-
-    public class EraChange_Patch
-    {     
-        [HarmonyPatch("Raise")]
-        [HarmonyPostfix]
-
-        public static void Raise (object sender, int empireIndex, int eraIndex, StaticString previousFactionName)
-        {
-            if(!GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "0"))
-            {
-                ScoringRound.RoundScoring(false, empireIndex: empireIndex);            
-            }            
-        }
-    }
-
     [HarmonyPatch(typeof(OptionsManager<GameOptionDefinition>))]
 	public class OptionsManager_Patch
 	{
@@ -364,19 +373,21 @@ namespace shakee.Humankind.FameByScoring
 		    GameOptionHelper.Initialize(new GameOptionInfo[]
 			{
 				FameByScoring.FameScoringOption,
+                FameByScoring.FameScoringOptionType,
                 FameByScoring.NumberScoringRounds,
                 FameByScoring.FameTurnMultiplier,
                 FameByScoring.FameBaseGain,
                 FameByScoring.FameGainMultiplier,
                 FameByScoring.EraStarSettingStars,
                 FameByScoring.EraStarSettingFame,
+                FameByScoring.EndGameScoringSetting,
+                FameByScoring.EndGameScoringSettingMultiplier,
 
 
 			});
 			return true;
 		}
-	}
-    
+	}    
     [HarmonyPatch(typeof(DepartmentOfDevelopment))]
     public class EraStar_Patch
     {		

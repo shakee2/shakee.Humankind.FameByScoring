@@ -46,9 +46,9 @@ namespace shakee.Humankind.FameByScoring
         }
         public static FixedPoint GetFameThreshold(float gameSpeed, int numEmpires, Empire empire)
         {
-            FixedPoint baseFame = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.FameBaseGain));
-            float baseFameMulti = Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.FameGainMultiplier));
-            int gameOptionTurns = Convert.ToInt32(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
+            FixedPoint baseFame = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameBaseGain));
+            float baseFameMulti = float.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameGainMultiplier));
+            int gameOptionTurns = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.NumberScoringRounds));
             EmpireInfo empireInfo = R.Utils_GameUtils().GetCurrentEmpireInfo();
             FixedPoint eraStarsReq;
             eraStarsReq = FixedPoint.Max(empireInfo.EraStarsRequirement,2);

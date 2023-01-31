@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Amplitude.Mercury.UI;
 
+
 namespace HumankindModTool
 {
 	// Token: 0x02000004 RID: 4
@@ -15,6 +16,7 @@ namespace HumankindModTool
         public string DefaultValue { get; set; }
         public UIControlType ControlType { get; set; }
         public List<GameOptionStateInfo> States { get; set; } = new List<GameOptionStateInfo>();
-    	
+
+
 	}
 }

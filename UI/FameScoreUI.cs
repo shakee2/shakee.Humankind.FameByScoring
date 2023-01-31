@@ -28,7 +28,7 @@ namespace shakee.Humankind.FameByScoring
             };
         void Start()
         {
-            Console.WriteLine("FameHistory Attach Test");
+            //Console.WriteLine("FameHistory Attach Test");
             // GameObject FameHistoryGUI = new GameObject("FameHistoryGUI");
             // FameHistoryGUI.transform.SetParent(var.transform);
             // FameHistoryGUI.AddComponent<UITransform>();
