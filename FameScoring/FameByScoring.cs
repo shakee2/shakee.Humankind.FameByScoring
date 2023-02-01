@@ -409,6 +409,8 @@ namespace shakee.Humankind.FameByScoring
             {
                 return false;
             }
+            if (Sandbox_Patch.ModDefaultingOff)
+                return true;
 
             if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "True"))
             {

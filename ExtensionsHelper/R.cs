@@ -625,7 +625,7 @@ namespace shakee.Humankind.FameByScoring
 
 		private static PropertyInfo Sandbox_Turn_PropertyInfo = typeof(Sandbox).GetProperty("Turn", BindingFlags.Instance | BindingFlags.NonPublic);
 		private static PropertyInfo Sandbox_SandboxThreadStartSettings_PropertyInfo = typeof(Sandbox).GetProperty("SandboxThreadStartSettings", BindingFlags.Instance | BindingFlags.NonPublic);
-		private static PropertyInfo SandboxThreadStartSettings_Parameter_PropertyInfo = typeof(SandboxThreadStartSettings).GetProperty("Parameter", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo SandboxThreadStartSettings_Parameter_PropertyInfo = typeof(SandboxThreadStartSettings).GetField("Parameter", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		public static Sandbox SandboxManager_Sandbox()
 		{

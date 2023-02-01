@@ -18,8 +18,10 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPostfix]   
         public static void Raise (SimulationEvent_NewTurnBegin __instance, object sender, ushort turn) 
         {
-            //Console.WriteLine("New Turn Begin");
-            if(GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "true"))
+            if (Sandbox_Patch.IsScenarioGame)
+                return;
+           
+            if(!Sandbox_Patch.ModDefaultingOff)
             {        
                 EmpireBanner_FamePennant_Patch.SetupComponent();
                 float gameSpeed;
@@ -71,8 +73,9 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPostfix]
         public static void Raise (object sender, int empireIndex, int eraIndex, StaticString previousFactionName)
         {
-            //Console.WriteLine("Era Change");
-            if(GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "true"))
+            if (Sandbox_Patch.IsScenarioGame)
+                return;
+            if(!Sandbox_Patch.ModDefaultingOff)
             {
                 ScoringRound.RoundScoring(false, empireIndex: empireIndex);            
             }            
@@ -96,7 +99,9 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPrefix]
         public static bool Raise (object sender, Battle battle)
         {
-            if (GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "true"))
+            if (Sandbox_Patch.IsScenarioGame)
+                return true;
+            if (!Sandbox_Patch.ModDefaultingOff)
             {
                 int numEmpires = Sandbox.NumberOfMajorEmpires;
                 int attackerIndex = battle.AttackerGroup().LeaderEmpireIndex();
@@ -140,7 +145,9 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPostfix]
         public static void Raise (object sender, Unit killed, Empire aggressor)    
         {
-            if (GameOptionHelper.CheckGameOption(FameByScoring.FameScoringOption, "true"))
+            if (Sandbox_Patch.IsScenarioGame)
+                return;
+            if (!Sandbox_Patch.ModDefaultingOff)
             {
                 int numEmpires = Sandbox.NumberOfMajorEmpires;
                 if (aggressor.Index() < numEmpires && aggressor.Index() >= 0)
@@ -158,6 +165,8 @@ namespace shakee.Humankind.FameByScoring
         [HarmonyPostfix]
         public static void UpdateEndGameStatus (EndGameController __instance)    
         {
+            if (Sandbox_Patch.IsScenarioGame)
+                return;
             bool endGame = GameOptionHelper.CheckGameOption(FameByScoring.EndGameScoringSetting,"true");
             //Console.WriteLine("Check EndgameStatus");
             if (__instance.EndGameStatus() == EndGameStatus.LastTurn && endGame)
@@ -166,9 +175,6 @@ namespace shakee.Humankind.FameByScoring
                 ScoringRound.RoundScoring(true, endGame: endGame);
                 //Console.WriteLine("End Game");
             }
-
-
-
         }
     }
 }
