@@ -30,13 +30,13 @@ namespace HumankindModTool
             }
         }
 
-		// Token: 0x06000018 RID: 24 RVA: 0x00002148 File Offset: 0x00000348
+
 		public static string GetGameOption(GameOptionInfo info)
         {
             return GameOptions.GetOption(new StaticString(info.Key)).CurrentValue;
         }
 
-		// Token: 0x06000019 RID: 25 RVA: 0x00002174 File Offset: 0x00000374
+
 		public static bool CheckGameOption(GameOptionInfo info, string checkValue, bool caseSensitive=false)
         {
             var val = GetGameOption(info);

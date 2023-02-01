@@ -12,10 +12,10 @@ namespace shakee.Humankind.FameByScoring
 {
     public class ScoringRound
     {
-        public static float rankSteps = 0.10f;
+        public static float rankSteps = 0.12f;
         public static float catchupStep = 0.05f;
         public static float eraLevelStep = 0.05f;
-        public static int debuglevel = 0; // 0 = none, 1 = low, 2 = some details, 3 = all details
+        public static int debuglevel = 2; // 0 = none, 1 = low, 2 = some details, 3 = all details
                 
         static string[,] arrState = new string[,]{
         {"CityCount","3","Expansionist"},
@@ -103,10 +103,11 @@ namespace shakee.Humankind.FameByScoring
 
                 for (int i = 0; i < listCat.Count; i++)
                 {
-                    FixedPoint[,] arrRank = new FixedPoint[numEmpires,3]; //neues Array pro Category
+                    FixedPoint[,] arrRank = new FixedPoint[numEmpires,3]; //neues Array pro Category; 0 = index; 1 = value; 
                     for (int j = 0; j < numEmpires; j++)
                     {
                         arrRank[j,0] = j; //Initialize arrRank mit Empire Index
+                        arrRank[j,2] = -1;
                     }
                     string[,] arrtmp = (string[,])listCat[i];
                     FetchStuffRound(numEmpires, arrtmp, ref arrRank, ranking);
@@ -238,6 +239,7 @@ namespace shakee.Humankind.FameByScoring
         {
 
             FixedPoint[,] tmpArr = arr.OrderByDescending(n => n[1]);
+            AddTies(ref tmpArr);
             for (int i = 0; i < arr.GetLength(0); i++)
             {
                 runDebug("Empire " + tmpArr[i,0].ToString() + " with Value " + tmpArr[i,1].ToString(),3);
@@ -249,7 +251,14 @@ namespace shakee.Humankind.FameByScoring
                 {
                     if (arrRank[i,0] == tmpArr[j,0]) 
                     {
-                        arrRank[i,1] += (1 + (Math.Max((numRanks - j),0) * 2));
+                        if (tmpArr[i,2] == -1)
+                        {
+                            arrRank[i,1] += (1 + (Math.Max((numRanks - j),0) * 2));
+                        }
+                        else
+                        {
+                            arrRank[i,1] += (1 + (Math.Max((numRanks - (int)tmpArr[j,2]),0) * 2));
+                        }
                         break;
                     }
                 }            
@@ -263,10 +272,11 @@ namespace shakee.Humankind.FameByScoring
             
             for (int u = 0; u < arrProperty.GetLength(0);u++)
             {
-                FixedPoint[,] arr = new FixedPoint[numEmpires,2];    
-                for (int i = 0; i < arr.GetLength(0); i++)
+                FixedPoint[,] arr = new FixedPoint[numEmpires,3];    // 0 = index; 1 = value; 2 = ties
+                for (int i = 0; i < arr.GetLength(0); i++) // setup array
                 {
-                    arr[i,0] = (FixedPoint)i;        
+                    arr[i,0] = (FixedPoint)i;     
+                    arr[i,2] = -1;
                 }
 
                 float weight = float.Parse(arrProperty[u,1]);
@@ -396,14 +406,14 @@ namespace shakee.Humankind.FameByScoring
             FixedPoint baseFame = int.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameBaseGain));
             float fameMulti = float.Parse(GameOptionHelper.GetGameOption(FameByScoring.FameGainMultiplier));
             int turn = R.SandboxManager_Sandbox().Turn();
-            FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);            
+            FixedPoint[,] tmpArr = arrRank.OrderByDescending(n => n[1]);       
             FixedPoint sum = 0;
-
+            AddTies(ref tmpArr);
             runDebug("EmpireRanking of Category:",2);
             for (int i = 0; i < numEmpires; i++)
             {
                 sum += arrRank[i,1];
-                runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1], 2);
+                runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1] + " | Tie to: " + tmpArr[i,2], 2);
                 //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
             }
             
@@ -435,12 +445,20 @@ namespace shakee.Humankind.FameByScoring
                 fameGain = baseFame * fameMulti;
                 if (ranking >= 2)
                 {
-                    for (int j = 0; j < numRanks; j++)
+                    for (int j = 0; j < numEmpires; j++)
                     {
                         if ((int)tmpArr[j,0] == i)
                         {
-                            fameGain *= (1 + (Math.Max((numRanks - j),0) * rankSteps));
-                            runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * rankSteps)) + " Fame: " + fameGain, 2);
+                            if (tmpArr[j,2] == -1)
+                            {
+                                fameGain *= (1 + (Math.Max((numRanks - j),0) * rankSteps));
+                                runDebug("Scoring of Empire: " + i + " - Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * rankSteps)) + " Fame: " + fameGain + " | Tied To Rank: none", 2 );
+                            }
+                            else
+                            {
+                                fameGain *= (1 + (Math.Max((numRanks - (int)tmpArr[j,2]),0) * rankSteps));
+                                runDebug("Scoring of Empire: " + i + " - Rank: " + ((int)tmpArr[j,2] + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - (int)tmpArr[j,2]),0) * rankSteps)) + " Fame: " + fameGain + " | Tied To Rank: " + (tmpArr[j,2] + 1), 2 );
+                            }
                             break;
                         }                            
                     }
@@ -455,7 +473,7 @@ namespace shakee.Humankind.FameByScoring
                     fameGain *= float.Parse(GameOptionHelper.GetGameOption(FameByScoring.EndGameScoringSettingMultiplier));
                 empire.SetEditablePropertyValue("FameScore",fameGain + oldFame);
                 arrFame[i,2] += fameGain;
-                runDebug("ScoringRound - Empire: " + i.ToString() + " | Famegain: +" + fameGain.ToString(),2);                         
+                //runDebug("ScoringRound - Empire: " + i.ToString() + " | Famegain: +" + fameGain.ToString(),2);                         
             }
         }
         //Era Change Method
@@ -472,7 +490,7 @@ namespace shakee.Humankind.FameByScoring
             for (int i = 0; i < numEmpires; i++)
             {
                 sum += arrRank[i,1];
-                runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1], 2);
+                runDebug("Empire " + tmpArr[i,0] + " with Value: " + tmpArr[i,1] + " | Tie to: " + tmpArr[i,2], 2);
                 //Console.WriteLine("Empire After {0} | Value: {1}", tmpArr[k,0], tmpArr[k,1]);
             }
 
@@ -497,12 +515,20 @@ namespace shakee.Humankind.FameByScoring
             fameGain = baseFame * fameMulti;
             if (ranking >= 2)
             {
-                for (int j = 0; j < numRanks; j++)
+                for (int j = 0; j < numEmpires; j++)
                 {                    
                     if ((int)tmpArr[j,0] == empireIndex)
                     {
-                        fameGain *= (1 + (Math.Max((numRanks - j),0) * rankSteps));
-                        runDebug("Found Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * rankSteps)) + " Fame: " + fameGain, 2);
+                        if (tmpArr[j,2] == -1)
+                        {
+                            fameGain *= (1 + (Math.Max((numRanks - j),0) * rankSteps));
+                            runDebug("EraChange: Empire: " + empireIndex + " - Rank: " + (j + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - j),0) * rankSteps)) + " Fame: " + fameGain + " | Tied To Rank: none", 2 );
+                        }
+                        else
+                        {
+                            fameGain *= (1 + (Math.Max((numRanks - (int)tmpArr[j,2]),0) * rankSteps));
+                            runDebug("EraChange: Empire: " + empireIndex + " - Rank: " + ((int)tmpArr[j,2] + 1) + " Multiplier: " + (1 + (Math.Max((numRanks - (int)tmpArr[j,2]),0) * rankSteps)) + " Fame: " + fameGain + " | Tied To Rank: " + (tmpArr[j,2] + 1), 2 );
+                        }
                         break;
                     }                            
                 }
@@ -523,7 +549,7 @@ namespace shakee.Humankind.FameByScoring
                     majorSave.lastFameRankEraChange += i;
                 }
             }
-            runDebug("EraChange - Empire: " + empireIndex.ToString() + " | Famegain: +" + fameGain.ToString(),2);    
+            //runDebug("EraChange - Empire: " + empireIndex.ToString() + " | Famegain: +" + fameGain.ToString(),2);    
         }
 
         static FixedPoint fameCalc (FixedPoint x, FixedPoint y)
@@ -548,6 +574,25 @@ namespace shakee.Humankind.FameByScoring
             if (ScoringRound.debuglevel >= debugCheck)
             {
                 Console.WriteLine(value);
+            }
+        }
+        public static void AddTies (ref FixedPoint[,] arrRank)
+        {
+            for (int i = 1; i < arrRank.GetLength(0); i++)
+            {
+                if (arrRank[i,1] == arrRank[i - 1,1])
+                {
+                    //runDebug("Tie Found for Rank: " + i + " | Values: " + arrRank[i,1] + " / " + arrRank[i - 1,1],2);
+                    if (i == 1)
+                    {
+                        arrRank[i - 1,2] = i - 1;
+                        arrRank[i,2] = i - 1;
+                    }
+                    else if (arrRank[i - 1,2] != (FixedPoint)(-1))                    
+                        arrRank[i,2] = arrRank[i - 1,2];                    
+                    else
+                        arrRank[i,2] = i - 1;
+                }
             }
         }
     }

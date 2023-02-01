@@ -15,7 +15,7 @@ using Amplitude.Framework;
 namespace shakee.Humankind.FameByScoring  
 {
 
-    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.6")]
+    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.7")]
     public class FameByScoring : BaseUnityPlugin
     {
         const string PLUGIN_GUID = "shakee.Humankind.FameByScoring";
@@ -409,6 +409,8 @@ namespace shakee.Humankind.FameByScoring
             {
                 return false;
             }
+            if (Sandbox_Patch.ModDefaultingOff)
+                return true;
 
             if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "True"))
             {
