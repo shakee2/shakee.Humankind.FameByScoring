@@ -151,10 +151,7 @@ namespace shakee.Humankind.FameByScoring
 		{
 			return (int)R.MajorEmpire_Index_FieldInfo.GetValue(self);
 		}
-		public static ReferenceCollection<Settlement> Settlements(this MajorEmpire self)
-		{
-			return (ReferenceCollection<Settlement>)R.MajorEmpire_Settlements_FieldInfo.GetValue(self);
-		}
+
 
 
 		// Token: 0x06000116 RID: 278 RVA: 0x00006028 File Offset: 0x00004228
@@ -453,7 +450,7 @@ namespace shakee.Humankind.FameByScoring
 		private static FieldInfo Empire_Index_FieldInfo = typeof(Empire).GetField("Index", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		private static FieldInfo MajorEmpire_Index_FieldInfo = typeof(MajorEmpire).GetField("Index", BindingFlags.Instance | BindingFlags.NonPublic);
-		private static FieldInfo MajorEmpire_Settlements_FieldInfo = typeof(MajorEmpire).GetField("Settlements", BindingFlags.Instance | BindingFlags.NonPublic);
+		
 
 		// Token: 0x0400007A RID: 122
 		
@@ -723,7 +720,52 @@ namespace shakee.Humankind.FameByScoring
 		}
 
 #endregion
+# region majorempire
+		private static FieldInfo MajorEmpire_MajorEmpireTerritoryPerTerritoryIndex_FieldInfo = typeof(MajorEmpire).GetField("MajorEmpireTerritoryPerTerritoryIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static ReferenceCollection<MajorEmpireTerritory> MajorEmpireTerritoryPerTerritoryIndex(this MajorEmpire self)
+		{
+			return (ReferenceCollection<MajorEmpireTerritory>)R.MajorEmpire_MajorEmpireTerritoryPerTerritoryIndex_FieldInfo.GetValue(self);
+		}
+		private static FieldInfo MajorEmpireTerritory_Territory_FieldInfo = typeof(MajorEmpireTerritory).GetField("Territory", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static Reference<Territory> Territory(this MajorEmpireTerritory self)
+		{
+			return (Reference<Territory>)R.MajorEmpireTerritory_Territory_FieldInfo.GetValue(self);
+		}
+		private static FieldInfo MajorEmpireTerritory_MajorEmpire_FieldInfo = typeof(MajorEmpireTerritory).GetField("MajorEmpire", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static Reference<MajorEmpire> MajorEmpire(this MajorEmpireTerritory self)
+		{
+			return (Reference<MajorEmpire>)R.MajorEmpireTerritory_MajorEmpire_FieldInfo.GetValue(self);
+		}
 
+		private static FieldInfo Territory_FaithProduced = typeof(Territory).GetField("FaithProduced", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static FixedPoint FaithProduced(this Territory self)
+		{
+			return (FixedPoint)R.Territory_FaithProduced.GetValue(self);
+		}
+		public static ReferenceCollection<Settlement> Settlements(this MajorEmpire self)
+		{
+			return (ReferenceCollection<Settlement>)R.MajorEmpire_Settlements_FieldInfo.GetValue(self);
+		}
+		private static FieldInfo MajorEmpire_Settlements_FieldInfo = typeof(MajorEmpire).GetField("Settlements", BindingFlags.Instance | BindingFlags.NonPublic);
+		private static FieldInfo Settlement_Region_FieldInfo = typeof(Settlement).GetField("Region", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static Reference<Region> Region(this Settlement self)
+		{
+			return (Reference<Region>)R.Settlement_Region_FieldInfo.GetValue(self);
+		}
+		private static FieldInfo Settlement_Region_Territory_FieldInfo = typeof(Region).GetField("Territories", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static ReferenceCollection<Territory> Territories(this Region self)
+		{
+			return (ReferenceCollection<Territory>)R.Settlement_Region_Territory_FieldInfo.GetValue(self);
+		}
+		private static FieldInfo Settlement_Repeatables_FieldInfo = typeof(Settlement).GetField("Repeatables", BindingFlags.Instance | BindingFlags.NonPublic);
+		public static ReferenceCollection<Repeatable> Repeatables(this Settlement self)
+		{
+			return (ReferenceCollection<Repeatable>)R.Settlement_Repeatables_FieldInfo.GetValue(self);
+		}
+		
+
+
+# endregion
 
 
 	}

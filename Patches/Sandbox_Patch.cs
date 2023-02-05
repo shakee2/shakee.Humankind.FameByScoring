@@ -98,7 +98,6 @@ namespace shakee.Humankind.FameByScoring
 				Diagnostics.LogException(exception);
 				ModDefaultingOff = true;
 			}
-			Console.WriteLine("Before Fin: " + ModDefaultingOff);
 			if (ModDefaultingOff == false)	
 			{	
 				Diagnostics.LogWarning($"[FameByScoring] entering Sandbox, ThreadStart");

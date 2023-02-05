@@ -15,7 +15,7 @@ using Amplitude.Framework;
 namespace shakee.Humankind.FameByScoring  
 {
 
-    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.7")]
+    [BepInPlugin(PLUGIN_GUID, "Fame By Scoring Rounds", "1.0.8")]
     public class FameByScoring : BaseUnityPlugin
     {
         const string PLUGIN_GUID = "shakee.Humankind.FameByScoring";
@@ -409,15 +409,15 @@ namespace shakee.Humankind.FameByScoring
             {
                 return false;
             }
-            if (Sandbox_Patch.ModDefaultingOff)
+            if (Sandbox_Patch.IsScenarioGame)
                 return true;
+            
 
             if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "True"))
             {
-                FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
-                R.majorEmpire(__instance).FameScore.Value -= x;
-                R.majorEmpire(__instance).FameScore.Value += x;          
-
+                // FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                // R.majorEmpire(__instance).FameScore.Value -= x;
+                // R.majorEmpire(__instance).FameScore.Value += x;          
             }
             else if (GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingFame, "False"))
             {
@@ -427,10 +427,12 @@ namespace shakee.Humankind.FameByScoring
             }
             else
             {
-                FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value) * (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame)); 
-                R.majorEmpire(__instance).FameScore.Value -= eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value);
+                FixedPoint x = eraStarInfo.CurrentReward * ( 1 + R.majorEmpire(__instance).FameGainBonus.Value); 
+                R.majorEmpire(__instance).FameScore.Value -= x;
+                x *= (float)Convert.ToSingle(GameOptionHelper.GetGameOption(FameByScoring.EraStarSettingFame));
                 R.majorEmpire(__instance).FameScore.Value += x;                
             }
+
 
             if (!GameOptionHelper.CheckGameOption(FameByScoring.EraStarSettingStars, "True") && R.majorEmpire(__instance).GetPropertyValue("EraLevel") > 0)
             {

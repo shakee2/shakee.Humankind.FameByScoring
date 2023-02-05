@@ -10,6 +10,7 @@ namespace shakee.Humankind.FameByScoring
     public class FameThresholds
     {
         public static FixedPoint fameThresholdStep = 0;
+        public static float eraLevelIncrease = 0.07f;
         public static void CheckThreshold ()
         {
             int numEmpires = Amplitude.Mercury.Sandbox.Sandbox.NumberOfMajorEmpires;
@@ -54,7 +55,7 @@ namespace shakee.Humankind.FameByScoring
             eraStarsReq = FixedPoint.Max(empireInfo.EraStarsRequirement,2);
             
 
-            FixedPoint tmpFame = baseFame * baseFameMulti * 4 * 1.5f;  // 20 * 1 * 4 = 96; 4 = number of categories
+            FixedPoint tmpFame = baseFame * baseFameMulti * 4 * 1.5f * (1 + eraLevelIncrease * empire.EraLevel.Value);  // 20 * 1 * 4 = 96; 4 = number of categories
             FixedPoint checkturn = (FixedPoint.Floor((FixedPoint)50 * gameSpeed / (gameOptionTurns * gameSpeed))); // 50 * 0,5 / 8 * 0,5 = 6
             FixedPoint fameTreshold = FixedPoint.Floor(tmpFame * checkturn / eraStarsReq); // 96 * 6 / 7 = 
             fameThresholdStep = fameTreshold;
