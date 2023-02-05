@@ -15,7 +15,7 @@ namespace shakee.Humankind.FameByScoring
         public static float rankSteps = 0.12f;
         public static float catchupStep = 0.05f;
         public static float eraLevelStep = 0.05f;
-        public static int debuglevel = 2; // 0 = none, 1 = low, 2 = some details, 3 = all details
+        public static int debuglevel = 0; // 0 = none, 1 = low, 2 = some details, 3 = all details
                 
         static string[,] arrState = new string[,]{
         {"CityCount","3","Expansionist"},
@@ -23,6 +23,8 @@ namespace shakee.Humankind.FameByScoring
         {"NumberOfEnactedCivic","1","Cultural"},
         {"ResearchNet","0.05","Sciencist"},
         {"NumberOfCulturallyControlledTerritory","1","Cultural"},
+        {"PollutionNet", "0.1", "None"},
+        {"Religion", "0.15", "None"},
         };
         static string[,] arrEconomy = new string[,]{
         {"MoneyNet","0.01","Merchant"},
@@ -30,6 +32,9 @@ namespace shakee.Humankind.FameByScoring
         {"InfluenceNet","0.01","Cultural"},
         //{"InfluenceStock","0.02","Cultural"},
         {"SumOfLuxuryResourceAccessCount","2","Merchant"},
+        {"LandTradeRoadsCount", "1", "Merchant"},
+        {"NavalTradeRoadsCount", "0.5", "Merchant"},
+        {"AirTradeRoadsCount", "2", "Merchant"},
         
         };
         static string[,] arrMilitary = new string[,]{
@@ -47,8 +52,7 @@ namespace shakee.Humankind.FameByScoring
         {"SumOfPopulation","0.10","Farmer"},
         {"HolySite", "3", "Builder"},
         {"CulturalWonder", "5", "Builder"},
-        {"LandTradeRoadsCount", "1", "Merchant"},
-        {"NavalTradeRoadsCount", "0.5", "Merchant"},
+        {"Repeatables", "1.5", "Builder"},
         };
         public static List<object> listCat = new List<object>()
         {
@@ -240,10 +244,18 @@ namespace shakee.Humankind.FameByScoring
 
             FixedPoint[,] tmpArr = arr.OrderByDescending(n => n[1]);
             AddTies(ref tmpArr);
+            FixedPoint sum = 0;
             for (int i = 0; i < arr.GetLength(0); i++)
             {
                 runDebug("Empire " + tmpArr[i,0].ToString() + " with Value " + tmpArr[i,1].ToString(),3);
+                sum += tmpArr[i,1];
             }
+            if (sum == 0)
+            {
+                runDebug("Property is Empty - skipped",3);
+                return;
+            }
+                
             int numRanks = (int)Math.Ceiling((float)arrRank.GetLength(0) / 2);
             for (int i = 0; i < arrRank.GetLength(0); i++) // empire loop
             {
@@ -269,7 +281,9 @@ namespace shakee.Humankind.FameByScoring
         public static void FetchStuffRound (int numEmpires, string[,] arrProperty, ref FixedPoint[,] arrRank, int ranking)
         {
             runDebug("Fetchstuff for Category",2);
-            
+            PollutionSnapshot.Data pollutionSnapshotData = Snapshots.PollutionSnapshot.PresentationData;
+            GameSnapshot.Data gameSnapshotData = Snapshots.GameSnapshot.PresentationData;
+            ReligionSnapshot.Data religionSnapShot = Snapshots.ReligionSnapshot.PresentationData;
             for (int u = 0; u < arrProperty.GetLength(0);u++)
             {
                 FixedPoint[,] arr = new FixedPoint[numEmpires,3];    // 0 = index; 1 = value; 2 = ties
@@ -281,12 +295,13 @@ namespace shakee.Humankind.FameByScoring
 
                 float weight = float.Parse(arrProperty[u,1]);
                 string affinity = arrProperty[u,2];
-
+                
 
                 for (int i = 0; i < numEmpires; i++)
                 {   
                     MajorEmpire empire = Sandbox.MajorEmpires[i];
                     FactionDefinition empireFaction = R.Utils_GameUtils().GetFactionDefinition(i);
+                    
                     float catchup = 0f;
                     float x = 0f;
                     FixedPoint vEraLevel = empire.GetPropertyValue("EraLevel");  
@@ -312,10 +327,56 @@ namespace shakee.Humankind.FameByScoring
                     ReferenceCollection<Settlement> empSettlements;
                     int x1;
                     int x2;
-                    //int x3;
-                    empSettlements = empire.Settlements();                    
+                    FixedPoint testval = 0;
+                    empSettlements = empire.Settlements();                   
+
                     switch (arrProperty[u,0])
                     {
+                        case "Repeatables":
+                            for (x1 = 0; x1 < empSettlements.Count; x1++)
+                            {
+                                for (x2 = 0; x2 < empSettlements[x1].Repeatables().Count;x2++)
+                                {
+                                    x += (float)empSettlements[x1].Repeatables()[x2].RepeatableCount.Value;
+                                }
+                            }
+                            //runDebug("Repeatables: " + x,2);
+                            break;
+                        case "Religion":
+                            //runDebug("ReligonIndex: " + gameSnapshotData.EmpireInfo[i].ReligionIndex,2);
+                            if (gameSnapshotData.EmpireInfo[i].ReligionIndex == -1)
+                                break;
+                            ReligionInfo religionInfo = gameSnapshotData.ReligionInfo[gameSnapshotData.EmpireInfo[i].ReligionIndex];    
+                            EmpireInfo empireInfo = gameSnapshotData.EmpireInfo[i];                            
+                            for (x1 = 0; x1 < empSettlements.Count; x1++)
+                            {
+                                for(x2 = 0; x2 < empSettlements[x1].Region().Entity.Territories().Count; x2++)
+                                {
+                                    Territory tmpTerritory = empire.Settlements()[x1].Region().Entity.Territories()[x2];
+                                    x += (float)empSettlements[x1].Region().Entity.Territories()[x2].GetPropertyValue("FaithProduced") * 0.01f;
+                                    x += (float)empSettlements[x1].Region().Entity.Territories()[x2].GetPropertyValue("DistrictFaithNet") * 0.01f;
+                                    x += (float)empSettlements[x1].Region().Entity.Territories()[x2].GetPropertyValue("FaithProducedByPollution") * 0.01f;
+                                }
+                            }
+                            
+                            for (x1 = 0; x1 < gameSnapshotData.EmpireDioceseInfo.Length; x1++)
+                            {
+                                if (i == gameSnapshotData.EmpireDioceseInfo[x1].EmpireIndex && empireInfo.ReligionIndex == gameSnapshotData.EmpireDioceseInfo[x1].ReligionIndex)
+                                {
+                                    x += gameSnapshotData.EmpireDioceseInfo[x1].FollowerCount * 0.1f;
+                                    x += gameSnapshotData.EmpireDioceseInfo[x1].InfluencedTerritoryCount;
+                                    x += gameSnapshotData.EmpireDioceseInfo[x1].DioceseCount * 2;
+                                    break;
+                                }
+                                
+                            }
+                            if (religionInfo.LeaderEmpireIndex == i)
+                                x *= (1.15f + 0.05f * religionInfo.NumberOfEmpires);      
+
+                            break;
+                        case "PollutionNet":
+                            x -= (float)pollutionSnapshotData.PollutionParticipants[i].PollutionNet;                            
+                            break;
                         case "DistrictCount":                            
                             for (x1 = 0; x1 < empSettlements.Count; x1++)
                             {
@@ -334,6 +395,12 @@ namespace shakee.Humankind.FameByScoring
                                 x += (float)(empSettlements[x1].NavalTradeRoadsCount.Value);
                             }     
                             break;
+                        case "AirTradeRoadsCount":                            
+                            for (x1 = 0; x1 < empSettlements.Count; x1++)
+                            {
+                                x += (float)(empSettlements[x1].AirTradeRoadsCount.Value);
+                            }     
+                            break;
                         case "BattlesFought":                            
                             x += (float)MajorEmpireSaveExtension.GetExtension(empire.Index()).BattlesFought;                               
                             break;
@@ -347,7 +414,7 @@ namespace shakee.Humankind.FameByScoring
                             for (x1 = 0; x1 < empSettlements.Count; x1++)
                             {
                                 for (x2 = 0; x2 < (empSettlements[x1].Districts().Count); x2++)
-                                {
+                                {                                    
                                     if (empSettlements[x1].Districts()[x2].ContainsDescriptor(new StaticString("Effect_Extension_HolySite")))                                    
                                     {x += 1;}
                                 }
@@ -386,8 +453,7 @@ namespace shakee.Humankind.FameByScoring
                         arrRank[i,1] += arr[i,1]; // add raw value
                     }
                     
-                }
-                
+                }                
                 if (ranking == 3)
                 {
                     runDebug("Empireranking for Property: " + arrProperty[u,0],3);
